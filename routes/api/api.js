@@ -12,6 +12,7 @@ var sqlQuery = require('./sqlQuery');
 function getQueryList(sql, res) {
     connect.query(sql, (err, result) => {
         if (err) {
+            console.log(err);
             var json = {
                 code: 300,
                 message: '错误'
