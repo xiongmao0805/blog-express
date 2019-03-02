@@ -1,5 +1,7 @@
 export default {
-    version : 'v-1.0',
+    userCount : 0,
+    viewsCount : 0,
+    articleCount : 0,
+    replyCount : 0,
     uploadLimit : '2M',
-    level : 2
 }

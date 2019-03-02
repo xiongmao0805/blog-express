@@ -1,21 +1,21 @@
 @mixin common{
-    .testResult{display: inline-block; font-size: 12px; color: #f0f0f0; text-align: center; width: 100%; height: 2rem; line-height: 2rem;}
+    .errortip{font-size: 12px; color: #f0f0f0; text-align: center; width: 100%; height: 2rem; line-height: 2rem;}
     input{
         font-size: 1rem; color: #fff; text-indent: 3rem; width: calc(100% - 22px); height: calc(100% - 2px); padding-right: 20px;
-        border: 1px solid rgba(255,255,255,.3); border-radius: 3px; background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.5); border-radius: 3px; background: rgba(255,255,255,.2);
         box-shadow: 0px 0px 3px rgba(255,255,255,.3) inset; transition: background .2s ease;
         &[name=password]{width: calc(100% - 2px); padding-right: 0;}
-        &:focus{background: rgba(255,255,255,.25);}
+        &:focus{background: rgba(255,255,255,.3);}
     }
-    p{
+    .input{
         position: relative; height: 3rem; line-height: 3rem; margin-bottom: 1rem;
         .icon{position: absolute; left: 0; top: 0; font-size: 1.5rem; text-align: center; width: 3rem; height: 3rem; line-height: 3rem; }
         .icon-lock{font-size: 1.4rem; text-indent: 6px;}
         .tips{display: inline-block; position: absolute; left: 3rem; top: 0; font-size: 1rem; color: rgba(255,255,255,.75);}
-        .icon-check-circle{position: absolute; right: 5px; top: 0.9rem; font-size: 15px;}
+        .icon-check-alt{position: absolute; right: 5px; top: 0.9rem; font-size: 15px;}
     }
     button{
-        font-size: 1.2rem; color: #888; width: 100%; height: 3rem; letter-spacing: 1px; margin-top: 5px;
-        background: rgba(255,255,255,.9); border-radius: 3px; cursor: pointer;
+        font-size: 1.2rem; color: #c53; text-shadow: 0 0 1px rgba(0,0,0,.1); width: 100%; height: 3rem; letter-spacing: 1px; margin-top: 5px;
+        background: white; border-radius: 3px; cursor: pointer;
     }
 }
