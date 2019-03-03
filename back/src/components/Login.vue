@@ -128,37 +128,35 @@ export default {
           username: this.username,
           password: this.password
         }
-      })
-        .then(res => {
-          if (res.data.resultCode == 200) {
-            setCookie("token", res.data.token);
-            setCookie("userid", res.data.userid);
-            setCookie("level", res.data.level);
-            this.$emit("freshCookie");
-            this.flag = false;
-            if (res.data.level == 1) {
-              this.$router.push("/admin");
-            } else {
-              this.$router.push("/web");
-            }
+      }).then(res => {
+        if (res.data.resultCode == 200) {
+          setCookie("token", res.data.token);
+          setCookie("userid", res.data.userid);
+          setCookie("level", res.data.level);
+          this.$emit("freshCookie");
+          this.flag = false;
+          if (res.data.level == 1) {
+            this.$router.push("/admin");
           } else {
-            let msg =
-              typeof res.data.resultMsg == "object"
-                ? res.data.resultMsg[0]
-                : res.data.resultMsg;
-            this.$layer.msg(msg, () => {
-              this.password = "";
-              this.$layer.closeAll();
-              this.flag = false;
-            });
+            this.$router.push("/web");
           }
-        })
-        .catch(err => {
-          this.$layer.msg("登录失败", () => {
+        } else {
+          let msg =
+            typeof res.data.resultMsg == "object"
+              ? res.data.resultMsg[0]
+              : res.data.resultMsg;
+          this.$layer.msg(msg, () => {
+            this.password = "";
             this.$layer.closeAll();
             this.flag = false;
           });
+        }
+      }).catch(err => {
+        this.$layer.msg("登录失败", () => {
+          this.$layer.closeAll();
+          this.flag = false;
         });
+      });
     }
   }
 };
