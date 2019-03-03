@@ -14,13 +14,12 @@
                 <p><router-link :to="{name:'article'}"><i class="icon-books"></i>文章管理</router-link></p>
                 <p><router-link :to="{name:'comment'}"><i class="icon-bubble" style="font-size: 1.25rem;"></i>评论管理</router-link></p>
                 <p><router-link :to="{name:'users'}"><i class="icon-user" style="font-size: 1.4rem;"></i>用户列表</router-link></p>
-                <!-- <p><router-link :to="{name:'navs'}">导航管理</router-link></p> -->
                 <p><router-link :to="{name:'links'}"><i class="icon-link"></i>友情链接</router-link></p>
                 <p><router-link :to="{name:'config'}"><i class="icon-cog"></i>网站配置</router-link></p>
             </div>
             <keep-alive><router-view class="main"></router-view></keep-alive>
         </div>
-        <footer>Copyright 2017 Design by QianLin</footer>
+        <footer>Copyright 2017 Design by XiongMao</footer>
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/components/Main'
+import Major from '@/components/Major'
 import Home from '@/components/Home'
 import Login from '@/components/Login'
 import Register from '@/components/register'
@@ -24,123 +24,104 @@ import ModifyConfig from '@/components/config/Modify.vue'
 Vue.use(Router)
 
 export default new Router({
-    mode : 'history',
-    linkActiveClass : 'active',
-    routes : [
+  mode: 'history',
+  linkActiveClass: 'active',
+  routes: [
+    {
+      path: '/admin',
+      // name: 'admin',
+      component: Major,
+      children: [
         {
-            path : '/admin',
-            name : 'admin',
-            component : Main,
-            children : [
-                {
-                    path : '',
-                    redirect : {name : 'index'}
-                },
-                {
-                    path : 'index',
-                    name : 'index',
-                    component : Home,
-                },
-                {
-                    path : 'category',
-                    name : 'category',
-                    component : Category,
-                    children : [
-                        {
-                            path : 'add',
-                            component : AddCategory
-                        },
-                        {
-                            path : 'modify/:id',
-                            component : ModifyCategory
-                        }
-                    ]
-                },
-                {
-                    path : 'article',
-                    name : 'article',
-                    component : Article,
-                    children : [
-                        {
-                            path : 'add',
-                            component : AddArticle
-                        },
-                        {
-                            path : 'modify/:id',
-                            component : ModifyArticle
-                        }
-                    ]
-                },
-                {
-                    path : 'comment',
-                    name : 'comment',
-                    //component  : Comment
-                },
-                {
-                    path : 'users',
-                    name : 'users',
-                    component  : User
-                },
-                {
-                    path : 'links',
-                    name : 'links',
-                    component  : Links,
-                    children : [
-                        {
-                            path : 'add',
-                            component : AddLinks
-                        },
-                        {
-                            path : 'modify/:id',
-                            component : ModifyLinks
-                        }
-                    ]
-                },
-                {
-                    path : 'config',
-                    name : 'config',
-                    component  : Config,
-                    children : [
-                        {
-                            path : 'add',
-                            component : AddConfig
-                        },
-                        {
-                            path : 'modify/:id',
-                            component : ModifyConfig
-                        }
-                    ]
-                }
-            ]
+          path: '',
+          redirect: { name: 'index' }
         },
         {
-            path : '/admin/login',
-            name : 'login',
-            component : Login
+          path: 'index',
+          name: 'index',
+          component: Home,
         },
         {
-            path : '/admin/register',
-            name : 'register',
-            component : Register
+          path: 'category',
+          name: 'category',
+          component: Category,
+          children: [
+            {
+              path: 'add',
+              component: AddCategory
+            },
+            {
+              path: 'modify/:id',
+              component: ModifyCategory
+            }
+          ]
         },
-    ]
-})
-
-// import Navs from '@/components/navs'
-// import AddNavs from '@/components/navs/Add.vue'
-// import ModifyNavs from '@/components/navs/Modify.vue'
-// {
-//     path : 'navs',
-//     name : 'navs',
-//     component  : Navs,
-//     children : [
-//         {
-//             path : 'add',
-//             component : AddNavs
-//         },
-//         {
-//             path : 'modify/:id',
-//             component : ModifyNavs
-//         }
-//     ]
-// },
+        {
+          path: 'article',
+          name: 'article',
+          component: Article,
+          children: [
+            {
+              path: 'add',
+              component: AddArticle
+            },
+            {
+              path: 'modify/:id',
+              component: ModifyArticle
+            }
+          ]
+        },
+        {
+          path: 'comment',
+          name: 'comment',
+          //component  : Comment
+        },
+        {
+          path: 'users',
+          name: 'users',
+          component: User
+        },
+        {
+          path: 'links',
+          name: 'links',
+          component: Links,
+          children: [
+            {
+              path: 'add',
+              component: AddLinks
+            },
+            {
+              path: 'modify/:id',
+              component: ModifyLinks
+            }
+          ]
+        },
+        {
+          path: 'config',
+          name: 'config',
+          component: Config,
+          children: [
+            {
+              path: 'add',
+              component: AddConfig
+            },
+            {
+              path: 'modify/:id',
+              component: ModifyConfig
+            }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/admin/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/admin/register',
+      name: 'register',
+      component: Register
+    },
+  ]
+});
