@@ -5,35 +5,17 @@
       <h1>Welcome</h1>
       <p class="errortip">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
-        <b
-          class="errors"
-          v-show="!errors.has('username') && errors.has('password')"
-        >{{errors.first('password')}}</b>
+        <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input
-          type="text"
-          name="username"
-          autocomplete="off"
-          v-model="username"
-          v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'"
-          maxlength="30"
-          style="padding-right: 20px;"
-        >
+        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30" style="padding-right: 20px;">
         <span class="tips" v-show="username.length <= 0">用户名</span>
         <span class="icon-check-alt" v-show="nameAvalible"></span>
       </div>
       <div class="input" @click="focus">
         <span class="icon icon-lock"></span>
-        <input
-          type="password"
-          name="password"
-          autocomplete="off"
-          v-model="password"
-          v-validate="'required|min:6|max:30'"
-          maxlength="30"
-        >
+        <input type="password" name="password" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
         <span class="tips" v-show="password.length <= 0">密码</span>
       </div>
       <button type="login" @click="login">Login</button>
@@ -57,7 +39,6 @@ export default {
       nameAvalible: false,
       checkingName: false,
       timer: "",
-      inputBg: "rgba(255,255,255,.3)",
       flag: false
     };
   },
@@ -85,18 +66,16 @@ export default {
         this.$ajax({
           method: "get",
           url: window.location.origin + "/api/check/" + val
-        })
-          .then(res => {
-            this.checkingName = false;
-            if (res.data.count >= 1) {
-              this.nameAvalible = true;
-            } else {
-              this.nameAvalible = false;
-            }
-          })
-          .catch(err => {
-            this.checkingName = false;
-          });
+        }).then(res => {
+          this.checkingName = false;
+          if (res.data.count >= 1) {
+            this.nameAvalible = true;
+          } else {
+            this.nameAvalible = false;
+          }
+        }).catch(err => {
+          this.checkingName = false;
+        });
       }, 800);
     }
   },

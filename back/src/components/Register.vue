@@ -3,45 +3,23 @@
     <slot></slot>
     <div class="wrap">
       <h1>
-        注册
-        <span>已有帐号，前往
-          <router-link to="login">登录</router-link>
-        </span>
+        <b>注册</b>
+        <span>已有帐号，前往 <router-link to="login">登录</router-link></span>
       </h1>
       <p class="errortip">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
-        <b
-          class="errors"
-          v-show="!errors.has('username') && errors.has('password')"
-        >{{errors.first('password')}}</b>
-        <b
-          class="errors"
-          v-show="!errors.has('username') && !errors.has('password') && errors.has('repwd')"
-        >{{errors.first('repwd')}}</b>
+        <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
+        <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('repwd')">{{errors.first('repwd')}}</b>
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input
-          type="text"
-          name="username"
-          autocomplete="off"
-          v-model="username"
-          v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'"
-          maxlength="30"
-        >
+        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="tips" v-show="username.length <= 0">用户名</span>
         <span class="icon-check-alt" v-show="nameAvalible"></span>
       </div>
       <div class="input" @click="focus">
         <span class="icon icon-lock"></span>
-        <input
-          type="password"
-          name="password"
-          autocomplete="off"
-          v-model="password"
-          v-validate="'required|min:6|max:30'"
-          maxlength="30"
-        >
+        <input type="password" name="password" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
         <span class="tips" v-show="password.length <= 0">密码</span>
       </div>
       <div class="input" @click="focus">
@@ -67,20 +45,17 @@ export default {
       nameAvalible: false,
       checkingName: false,
       timer: "",
-      inputBg: "rgba(255,255,255,.3)",
       flag: false
     };
   },
   created() {
     //var ptn = /^[a-zA-Z]+[\w-]+[a-zA-Z0-9]+@[a-zA-Z0-9]+[\w-]+[a-zA-Z0-9]+(\.[a-zA-Z]+){1,2}$/i; 邮箱格式验证正则
-    if (getCookie("token") && getCookie("userid")) this.$router.push("/admin");
+    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
     window.onkeyup = e => {
       if (this.$route.name != "register") return;
-      if (e.keyCode == 13) {
-        this.register();
-      }
+      if (e.keyCode == 13) this.register();
     };
   },
   watch: {
@@ -88,7 +63,6 @@ export default {
       if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
       this.timer = setTimeout(() => {
-        if (!val) return;
         if (this.checkingName) return;
         this.checkingName = true;
         if (this.errors.has("username")) this.errors.remove("username");
@@ -96,18 +70,16 @@ export default {
         this.$ajax({
           method: "get",
           url: window.location.origin + "/api/check/" + val
-        })
-          .then(res => {
-            this.checkingName = false;
-            if (res.data.count <= 0) {
-              this.nameAvalible = true;
-            } else {
-              this.nameAvalible = false;
-            }
-          })
-          .catch(err => {
-            this.checkingName = false;
-          });
+        }).then(res => {
+          this.checkingName = false;
+          if (res.data.count <= 0) {
+            this.nameAvalible = true;
+          } else {
+            this.nameAvalible = false;
+          }
+        }).catch(err => {
+          this.checkingName = false;
+        });
       }, 500);
     }
   },

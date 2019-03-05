@@ -6,7 +6,7 @@ import router from './router'
 import store from '@/store'
 import axios from 'axios'
 import layer from 'vue-layer'
-import Validate, {Validator} from 'vee-validate'
+import Validate, { Validator } from 'vee-validate'
 import zh_CN from 'vee-validate/dist/locale/zh_CN'
 
 Vue.config.productionTip = false
@@ -39,9 +39,9 @@ const dictionary = {
 };
 Validator.localize(dictionary);
 const config = {
-  locale : 'zh_CN',
-  events : 'blur',
-  strict : true
+  locale: 'zh_CN',
+  events: 'blur',
+  strict: true
 }
 Vue.use(Validate, config)
 
