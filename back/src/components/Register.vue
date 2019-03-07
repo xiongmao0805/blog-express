@@ -13,9 +13,9 @@
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
+        <input type="text" name="username" autocomplete="off" v-model="username" ref="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="tips" v-show="username.length <= 0">用户名</span>
-        <span class="icon-check-alt" v-show="nameAvalible"></span>
+        <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="input" @click="focus">
         <span class="icon icon-lock"></span>
@@ -42,8 +42,8 @@ export default {
       username: "",
       password: "",
       repwd: "",
-      nameAvalible: false,
-      checkingName: false,
+      nameEnable: false,
+      checkState: false,
       timer: "",
       flag: false
     };
@@ -62,25 +62,26 @@ export default {
     username(val, oldval) {
       if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
+
       this.timer = setTimeout(() => {
-        if (this.checkingName) return;
-        this.checkingName = true;
+        if (this.checkState) return;
+        this.checkState = true;
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
           method: "get",
           url: window.location.origin + "/api/check/" + val
         }).then(res => {
-          this.checkingName = false;
+          this.checkState = false;
           if (res.data.count <= 0) {
-            this.nameAvalible = true;
+            this.nameEnable = true;
           } else {
-            this.nameAvalible = false;
+            this.nameEnable = false;
           }
         }).catch(err => {
-          this.checkingName = false;
+          this.checkState = false;
         });
-      }, 500);
+      }, 800);
     }
   },
   methods: {
@@ -102,8 +103,8 @@ export default {
     register() {
       // if (!this.username || !this.password) return;
       // this.testPwd();
-      // if (this.checkingName) return;
-      // if (!this.nameAvalible) {
+      // if (this.checkState) return;
+      // if (!this.nameEnable) {
       //   let rule = {
       //     field: "username",
       //     msg: "用户名已存在",
@@ -123,31 +124,26 @@ export default {
           username: this.username,
           password: this.password
         }
-      })
-        .then(res => {
-          if (res.data.resultCode == 200) {
-            this.$layer.msg(res.data.resultMsg, () => {
-              this.$layer.closeAll();
-              this.$router.push("/admin/login");
-              this.flag = false;
-            });
-          } else {
-            let msg =
-              typeof res.data.resultMsg == "object"
-                ? res.data.resultMsg[0]
-                : res.data.resultMsg;
-            this.$layer.msg(msg, () => {
-              this.$layer.closeAll();
-              this.flag = false;
-            });
-          }
-        })
-        .catch(err => {
-          this.$layer.msg("注册失败", () => {
+      }).then(res => {
+        if (res.data.resultCode == 200) {
+          this.$layer.msg(res.data.resultMsg, () => {
+            this.$layer.closeAll();
+            this.$router.push("/admin/login");
+            this.flag = false;
+          });
+        } else {
+          let msg = typeof res.data.resultMsg == "object" ? res.data.resultMsg[0] : res.data.resultMsg;
+          this.$layer.msg(msg, () => {
             this.$layer.closeAll();
             this.flag = false;
           });
+        }
+      }).catch(err => {
+        this.$layer.msg("注册失败", () => {
+          this.$layer.closeAll();
+          this.flag = false;
         });
+      });
     }
   }
 };
