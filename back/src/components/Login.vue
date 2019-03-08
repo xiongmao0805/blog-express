@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getCookie, setCookie } from "@/resource/js/common.js";
+import bkUtils from "@/resource/js/bkUtils.js";
 
 export default {
   name: "login",
@@ -43,7 +43,7 @@ export default {
     };
   },
   created() {
-    if (getCookie("token") && getCookie("userid")) this.$router.push("/admin");
+    if (bkUtils.getCookie("token") && bkUtils.getCookie("userid")) this.$router.push("/admin");
   },
   mounted() {
     window.onkeyup = e => {
@@ -109,9 +109,9 @@ export default {
         }
       }).then(res => {
         if (res.data.resultCode == 200) {
-          setCookie("token", res.data.token);
-          setCookie("userid", res.data.userid);
-          setCookie("level", res.data.level);
+          bkUtils.setCookie("token", res.data.token);
+          bkUtils.setCookie("userid", res.data.userid);
+          bkUtils.setCookie("level", res.data.level);
           this.$emit("freshCookie");
           this.flag = false;
           if (res.data.level == 1) {

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {setCookie, getCookie} from '@/resource/js/common.js'
+import bkUtils from "@/resource/js/bkUtils.js";
 export default {
     name : 'major',
     mounted () {
@@ -33,7 +33,7 @@ export default {
         window.onmousemove = function(){
             clearTimeout(timer);
             timer = setTimeout(() => {
-                setCookie('token', '', -1);
+                bkUtils.setCookie('token', '', -1);
             }, 20*60*1000);
         }
     },
@@ -44,7 +44,7 @@ export default {
     },
     methods : {
         loginOut(){
-            setCookie('token', '', -1);
+            bkUtils.setCookie('token', '', -1);
             window.location.reload();
         },
         tokenFresh(){
@@ -52,13 +52,13 @@ export default {
                 method : 'post',
                 url : '/api/fresh',
                 headers : {
-                    token : getCookie('token')
+                    token : bkUtils.getCookie('token')
                 }
             }).then((res) => {
                 if(res.data.resultCode == 200){
                     this.freshed = true;
                     let newtoken = res.headers.authorization.split('Bearer ')[1];
-                    setCookie('token', newtoken);
+                    bkUtils.setCookie('token', newtoken);
                 }
             });
         }

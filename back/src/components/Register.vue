@@ -9,11 +9,11 @@
       <p class="errortip">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
         <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
-        <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('repwd')">{{errors.first('repwd')}}</b>
+        <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('confirm')">{{errors.first('confirm')}}</b>
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" autocomplete="off" v-model="username" ref="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
+        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="tips" v-show="username.length <= 0">用户名</span>
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
@@ -24,8 +24,8 @@
       </div>
       <div class="input" @click="focus">
         <span class="icon icon-lock"></span>
-        <input type="password" name="repwd" autocomplete="off" v-model="repwd" @blur="testPwd">
-        <span class="tips" v-show="repwd.length <= 0">重复密码</span>
+        <input type="password" name="confirm" autocomplete="off" v-model="confirm" @blur="testConfirm">
+        <span class="tips" v-show="confirm.length <= 0">重复密码</span>
       </div>
       <button type="submit" @click="register">Register</button>
     </div>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getCookie } from "@/resource/js/common.js";
+import bkUtils from "@/resource/js/bkUtils.js";
 
 export default {
   name: "register",
@@ -41,7 +41,7 @@ export default {
     return {
       username: "",
       password: "",
-      repwd: "",
+      confirm: "",
       nameEnable: false,
       checkState: false,
       timer: "",
@@ -50,7 +50,7 @@ export default {
   },
   created() {
     //var ptn = /^[a-zA-Z]+[\w-]+[a-zA-Z0-9]+@[a-zA-Z0-9]+[\w-]+[a-zA-Z0-9]+(\.[a-zA-Z]+){1,2}$/i; 邮箱格式验证正则
-    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
+    if (bkUtils.getCookie("token") && bkUtils.getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
     window.onkeyup = e => {
@@ -59,6 +59,7 @@ export default {
     };
   },
   watch: {
+    // 验证用户名是否可用
     username(val, oldval) {
       if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
@@ -89,10 +90,11 @@ export default {
       let input = e.target.parentNode.getElementsByTagName("input")[0];
       input.focus();
     },
-    testPwd() {
-      if (this.repwd != this.password && !this.errors.has("repwd")) {
+    testConfirm() {
+      if (!this.password) return;
+      if (this.confirm != this.password) {
         let rule = {
-          field: "repwd",
+          field: "confirm",
           msg: "密码不一致",
           rule: "match",
           scope: null
@@ -101,22 +103,22 @@ export default {
       }
     },
     register() {
-      // if (!this.username || !this.password) return;
-      // this.testPwd();
-      // if (this.checkState) return;
-      // if (!this.nameEnable) {
-      //   let rule = {
-      //     field: "username",
-      //     msg: "用户名已存在",
-      //     rule: "match",
-      //     scope: null
-      //   };
-      //   this.errors.items.push(rule);
-      // }
-      // if (this.errors.items.length > 0) return;
+      if (!this.username || !this.password) return;
+      if (this.checkState) return;
+      if (!this.nameEnable) {
+        let rule = {
+          field: "username",
+          msg: "用户名已存在",
+          rule: "match",
+          scope: null
+        };
+        this.errors.items.push(rule);
+      }
+      this.testConfirm();
+      if (this.errors.items.length > 0) return;
 
-      // if (this.flag) return;
-      // this.flag = true;
+      if (this.flag) return;
+      this.flag = true;
       this.$ajax({
         method: "post",
         url: window.location.origin + "/api/register",
