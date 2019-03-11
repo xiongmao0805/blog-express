@@ -74,7 +74,7 @@ export default {
           url: window.location.origin + "/api/getUserByName/" + val
         }).then(res => {
           this.checkState = false;
-          if (res.data.data.length <= 0) {
+          if (res.data.length <= 0) {
             this.nameEnable = true;
           } else {
             this.nameEnable = false;
@@ -127,6 +127,7 @@ export default {
           password: this.password
         }
       }).then(res => {
+        console.log(res);return
         if (res.data.resultCode == 200) {
           this.$layer.msg(res.data.resultMsg, () => {
             this.$layer.closeAll();

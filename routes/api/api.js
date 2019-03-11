@@ -13,18 +13,10 @@ function mysqlOperate(sql, res) {
   connect.query(sql, (err, result) => {
     if (err) {
       console.log(err);
-      var json = {
-        code: 300,
-        message: '错误'
-      }
-      return res.json(json);
+      return;
     }
-    var json = {
-      code: 200,
-      message: '成功',
-      data: result
-    }
-    res.json(json);
+    console.log(result)
+    res.json(result);
   });
 }
 
