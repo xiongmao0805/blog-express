@@ -1,6 +1,10 @@
 var sqlQuery = {
   get: {
-    getUser: 'select * from category'
+    getAllUser: 'select * from category',
+    getUserByName: function (username){
+      return `select * from users where username=${'username'}`;
+    },
+
   },
   post: {
     register: function (params) {

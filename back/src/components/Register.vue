@@ -71,10 +71,10 @@ export default {
 
         this.$ajax({
           method: "get",
-          url: window.location.origin + "/api/check/" + val
+          url: window.location.origin + "/api/getUserByName/" + val
         }).then(res => {
           this.checkState = false;
-          if (res.data.count <= 0) {
+          if (res.data.data.length <= 0) {
             this.nameEnable = true;
           } else {
             this.nameEnable = false;
