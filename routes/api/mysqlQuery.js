@@ -2,7 +2,7 @@ var sqlQuery = {
   get: {
     getAllUser: 'select * from category',
     getUserByName: function (username){
-      return `select * from users where username=${'username'}`;
+      return `select * from users where username='${username}'`;
     },
 
   },

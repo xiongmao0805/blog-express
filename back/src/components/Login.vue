@@ -106,27 +106,15 @@ export default {
           password: this.password
         }
       }).then(res => {
-        if (res.data.resultCode == 200) {
-          bkUtils.setCookie("token", res.data.token);
-          bkUtils.setCookie("userid", res.data.userid);
-          bkUtils.setCookie("level", res.data.level);
-          this.$emit("freshCookie");
-          this.flag = false;
-          if (res.data.level == 1) {
-            this.$router.push("/admin");
-          } else {
-            this.$router.push("/web");
-          }
+        bkUtils.setCookie("token", res.data.token);
+        bkUtils.setCookie("userid", res.data.userid);
+        bkUtils.setCookie("level", res.data.level);
+        this.$emit("freshCookie");
+        this.flag = false;
+        if (res.data.level == 1) {
+          this.$router.push("/admin");
         } else {
-          let msg =
-            typeof res.data.resultMsg == "object"
-              ? res.data.resultMsg[0]
-              : res.data.resultMsg;
-          this.$layer.msg(msg, () => {
-            this.password = "";
-            this.$layer.closeAll();
-            this.flag = false;
-          });
+          this.$router.push("/web");
         }
       }).catch(err => {
         this.$layer.msg("登录失败", () => {

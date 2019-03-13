@@ -103,22 +103,22 @@ export default {
       }
     },
     register() {
-      if (!this.username || !this.password) return;
-      if (this.checkState) return;
-      if (!this.nameEnable) {
-        let rule = {
-          field: "username",
-          msg: "用户名已存在",
-          rule: "match",
-          scope: null
-        };
-        this.errors.items.push(rule);
-      }
-      this.testConfirm();
-      if (this.errors.items.length > 0) return;
+      // if (!this.username || !this.password) return;
+      // if (this.checkState) return;
+      // if (!this.nameEnable) {
+      //   let rule = {
+      //     field: "username",
+      //     msg: "用户名已存在",
+      //     rule: "match",
+      //     scope: null
+      //   };
+      //   this.errors.items.push(rule);
+      // }
+      // this.testConfirm();
+      // if (this.errors.items.length > 0) return;
 
-      if (this.flag) return;
-      this.flag = true;
+      // if (this.flag) return;
+      // this.flag = true;
       this.$ajax({
         method: "post",
         url: window.location.origin + "/api/register",
@@ -127,22 +127,15 @@ export default {
           password: this.password
         }
       }).then(res => {
-        console.log(res);return
-        if (res.data.resultCode == 200) {
-          this.$layer.msg(res.data.resultMsg, () => {
-            this.$layer.closeAll();
-            this.$router.push("/admin/login");
-            this.flag = false;
-          });
-        } else {
-          let msg = typeof res.data.resultMsg == "object" ? res.data.resultMsg[0] : res.data.resultMsg;
-          this.$layer.msg(msg, () => {
-            this.$layer.closeAll();
-            this.flag = false;
-          });
-        }
+        this.$layer.msg(res.data.msg, () => {
+          this.$layer.closeAll();
+          this.$router.push("/admin/login");
+          this.flag = false;
+        });
       }).catch(err => {
-        this.$layer.msg("注册失败", () => {
+        var msg = err.response.data.msg
+        msg = msg ? msg : '失败';
+        this.$layer.msg(msg, () => {
           this.$layer.closeAll();
           this.flag = false;
         });
