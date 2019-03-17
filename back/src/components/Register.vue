@@ -103,22 +103,22 @@ export default {
       }
     },
     register() {
-      // if (!this.username || !this.password) return;
-      // if (this.checkState) return;
-      // if (!this.nameEnable) {
-      //   let rule = {
-      //     field: "username",
-      //     msg: "用户名已存在",
-      //     rule: "match",
-      //     scope: null
-      //   };
-      //   this.errors.items.push(rule);
-      // }
-      // this.testConfirm();
-      // if (this.errors.items.length > 0) return;
+      if (!this.username || !this.password) return;
+      if (this.checkState) return;
+      if (!this.nameEnable) {
+        let rule = {
+          field: "username",
+          msg: "用户名已存在",
+          rule: "match",
+          scope: null
+        };
+        this.errors.items.push(rule);
+      }
+      this.testConfirm();
+      if (this.errors.items.length > 0) return;
 
-      // if (this.flag) return;
-      // this.flag = true;
+      if (this.flag) return;
+      this.flag = true;
       this.$ajax({
         method: "post",
         url: window.location.origin + "/api/register",

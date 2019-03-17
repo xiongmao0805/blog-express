@@ -1,7 +1,8 @@
 var express = require('express');
 var mysql = require('mysql');
 var utility = require('utility');
-var mysqlQuery = require('./mysqlQuery');
+var { check, validationResult } = require('express-validator/check');
+var sqlString = require('./sqlString');
 var router = express.Router();
 
 var connect = mysql.createConnection({
@@ -28,7 +29,7 @@ connect.query('select * from users where username="熊猫"', (err, result) => {
 });
 /* 自动创建管理员账号 */
 
-function mysqlOperate(sql, res, fn) {
+function sqlQuery(sql, res, fn) {
   connect.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -61,33 +62,47 @@ router.post('/', (req, res, next) => {
 
 /* 登录注册 */
 router.post('/login', (req, res, next) => {
-  var sql = mysqlQuery.login;
+  var sql = sqlString.login;
 });
-router.post('/register', (req, res, next) => {
-  console.log(req.body);
+router.post('/register', [
+  check('username').isLength({ min: 2, max: 30 }),
+  check('password').isLength({ min: 6, max: 30 }),
+], (req, res, next) => {
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    var err = errors.array()[0];
+    return res.status(300).json({
+      msg: err.param + ' ' + err.msg
+    });
+  }
+  if (!/^[\w一-龥]+$/g.test(req.body.username)) {
+    return res.status(300).json({
+      msg: 'username Invalid value'
+    });
+  }
 
-  var testStr = mysqlQuery.get.getUserByName(req.body.username);
-  mysqlOperate(testStr, res, data => {
+  var testStr = sqlString.get.getUserByName(req.body.username);
+  sqlQuery(testStr, res, data => {
     if (data.length > 0) {
-      res.status(300).json({
+      return res.status(300).json({
         msg: '用户名已被注册',
       });
-      return;
     }
-    var sqlStr = mysqlQuery.post.register(req.body);
-    mysqlOperate(sqlStr, res);
+    req.body.password = utility.sha1(utility.md5(req.body.password));
+    var sqlStr = sqlString.post.register(req.body);
+    sqlQuery(sqlStr, res);
   });
 });
 /* 登录注册 */
 
 /* 获取用户 */
 router.get('/getUserByName/:name', (req, res, next) => {
-  var sqlStr = mysqlQuery.get.getUserByName(req.params.name);
-  mysqlOperate(sqlStr, res);
+  var sqlStr = sqlString.get.getUserByName(req.params.name);
+  sqlQuery(sqlStr, res);
 });
 router.get('/getAllUser', (req, res, next) => {
-  var sqlStr = mysqlQuery.get.getUser;
-  mysqlOperate(sqlStr, res);
+  var sqlStr = sqlString.get.getUser;
+  sqlQuery(sqlStr, res);
 });
 /* 获取用户 */
 
