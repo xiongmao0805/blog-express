@@ -9,7 +9,7 @@
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30" style="padding-right: 20px;">
+        <input type="text" name="username" ref="username"autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30" style="padding-right: 20px;">
         <span class="tips" v-show="username.length <= 0">用户名</span>
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import bkUtils from "@/resource/js/bkUtils.js";
+import { getCookie, setCookie } from "@/resource/js/utils.js";
 
 export default {
   name: "login",
@@ -43,7 +43,7 @@ export default {
     };
   },
   created() {
-    if (bkUtils.getCookie("token") && bkUtils.getCookie("userid")) this.$router.replace("/admin");
+    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
     window.onkeyup = e => {
@@ -55,6 +55,7 @@ export default {
     username(val, oldval) {
       if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
+
       this.timer = setTimeout(() => {
         if (!val) return;
         if (this.checkState) return;
@@ -79,8 +80,7 @@ export default {
   },
   methods: {
     focus(e) {
-      let input = e.target.parentNode.getElementsByTagName("input")[0];
-      input.focus();
+      this.$refs.username.focus();
     },
     login() {
       if (!this.username || !this.password) return;
@@ -106,9 +106,9 @@ export default {
           password: this.password
         }
       }).then(res => {
-        bkUtils.setCookie("token", res.data.token);
-        bkUtils.setCookie("userid", res.data.userid);
-        bkUtils.setCookie("level", res.data.level);
+        setCookie("token", res.data.token);
+        setCookie("userid", res.data.userid);
+        setCookie("level", res.data.level);
         this.$emit("freshCookie");
         this.flag = false;
         if (res.data.level == 1) {

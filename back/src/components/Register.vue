@@ -13,7 +13,7 @@
       </p>
       <div class="input" @click="focus">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
+        <input type="text" name="username" ref="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="tips" v-show="username.length <= 0">用户名</span>
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import bkUtils from "@/resource/js/bkUtils.js";
+import { getCookie } from "@/resource/js/utils.js";
+import veeForm from "@/resource/js/formValidate.js"
 
 export default {
   name: "register",
@@ -50,9 +51,10 @@ export default {
   },
   created() {
     //var ptn = /^[a-zA-Z]+[\w-]+[a-zA-Z0-9]+@[a-zA-Z0-9]+[\w-]+[a-zA-Z0-9]+(\.[a-zA-Z]+){1,2}$/i; 邮箱格式验证正则
-    if (bkUtils.getCookie("token") && bkUtils.getCookie("userid")) this.$router.replace("/admin");
+    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
+      console.log(veeForm)
     window.onkeyup = e => {
       if (this.$route.name != "register") return;
       if (e.keyCode == 13) this.register();
@@ -87,8 +89,7 @@ export default {
   },
   methods: {
     focus(e) {
-      let input = e.target.parentNode.getElementsByTagName("input")[0];
-      input.focus();
+      this.$refs.username.focus();
     },
     testConfirm() {
       if (!this.password) return;

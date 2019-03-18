@@ -7,14 +7,15 @@
 </template>
 
 <script>
-import bkUtils from "@/resource/js/bkUtils.js";
+import { getCookie, setCookie } from "@/resource/js/utils.js";
+
 export default {
   name: "admin",
   data() {
     return {
-      token: bkUtils.getCookie("token"),
-      userid: bkUtils.getCookie("userid"),
-      level: bkUtils.getCookie("level")
+      token: getCookie("token"),
+      userid: getCookie("userid"),
+      level: getCookie("level")
     };
   },
   created() {
@@ -27,20 +28,20 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (!bkUtils.getCookie("token")) {
-        bkUtils.setCookie("userid", "", -1);
-        bkUtils.setCookie("level", "", -1);
+      if (!getCookie("token")) {
+        setCookie("userid", "", -1);
+        setCookie("level", "", -1);
 
         if (this.$route.name == "register") return;
         this.$router.replace("/admin/login");
         return;
       }
-      if (bkUtils.getCookie("level") > 1) this.$router.replace("/web");
+      if (getCookie("level") > 1) this.$router.replace("/web");
     }
   },
   methods: {
     freshCookie() {
-      this.token = bkUtils.getCookie("token");
+      this.token = getCookie("token");
     }
   }
 };
