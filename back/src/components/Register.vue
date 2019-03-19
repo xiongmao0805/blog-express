@@ -34,7 +34,6 @@
 
 <script>
 import { getCookie } from "@/resource/js/utils.js";
-import veeForm from "@/resource/js/formValidate.js"
 
 export default {
   name: "register",
@@ -54,7 +53,6 @@ export default {
     if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
-      console.log(veeForm)
     window.onkeyup = e => {
       if (this.$route.name != "register") return;
       if (e.keyCode == 13) this.register();
@@ -117,9 +115,9 @@ export default {
       }
       this.testConfirm();
       if (this.errors.items.length > 0) return;
-
       if (this.flag) return;
       this.flag = true;
+
       this.$ajax({
         method: "post",
         url: window.location.origin + "/api/register",

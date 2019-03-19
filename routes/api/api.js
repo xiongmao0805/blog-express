@@ -4,6 +4,7 @@ var utility = require('utility');
 var { check, validationResult } = require('express-validator/check');
 var sqlString = require('./sqlString');
 var router = express.Router();
+var getQuery = sqlString.get, postQuery = sqlString.post;
 
 var connect = mysql.createConnection({
   host: 'localhost',
@@ -29,7 +30,7 @@ connect.query('select * from users where username="熊猫"', (err, result) => {
 });
 /* 自动创建管理员账号 */
 
-function sqlQuery(sql, res, fn) {
+function setQuery(sql, res, fn) {
   connect.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -52,7 +53,7 @@ function sqlQuery(sql, res, fn) {
   });
 }
 
-/* middle ware */
+// middle ware
 router.get('/', (req, res, next) => {
   next();
 });
@@ -61,9 +62,31 @@ router.post('/', (req, res, next) => {
 });
 
 /* 登录注册 */
-router.post('/login', (req, res, next) => {
-  var sql = sqlString.login;
+function logRegVelidate(req, res) {
+  var errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    var err = errors.array()[0];
+    return res.status(300).json({
+      msg: err.param + ' ' + err.msg
+    });
+  }
+  if (!/^[\w一-龥]+$/g.test(req.body.username)) {
+    return res.status(300).json({
+      msg: 'username Invalid value'
+    });
+  }
+}
+router.post('/login', [
+  check('username').isLength({ min: 2, max: 30 }),
+  check('password').isLength({ min: 6, max: 30 }),
+], (req, res, next) => {
+  logRegVelidate();
+
+  req.body.password = utility.sha1(utility.md5(req.body.password));
+  var sql = postQuery.login(req.body);
+  // setQuery();
 });
+
 router.post('/register', [
   check('username').isLength({ min: 2, max: 30 }),
   check('password').isLength({ min: 6, max: 30 }),
@@ -81,28 +104,28 @@ router.post('/register', [
     });
   }
 
-  var testStr = sqlString.get.getUserByName(req.body.username);
-  sqlQuery(testStr, res, data => {
+  var testStr = getQuery.getUserByName(req.body.username);
+  setQuery(testStr, res, data => {
     if (data.length > 0) {
       return res.status(300).json({
         msg: '用户名已被注册',
       });
     }
     req.body.password = utility.sha1(utility.md5(req.body.password));
-    var sqlStr = sqlString.post.register(req.body);
-    sqlQuery(sqlStr, res);
+    var sqlStr = postQuery.register(req.body);
+    setQuery(sqlStr, res);
   });
 });
 /* 登录注册 */
 
 /* 获取用户 */
 router.get('/getUserByName/:name', (req, res, next) => {
-  var sqlStr = sqlString.get.getUserByName(req.params.name);
-  sqlQuery(sqlStr, res);
+  var sqlStr = getQuery.getUserByName(req.params.name);
+  setQuery(sqlStr, res);
 });
 router.get('/getAllUser', (req, res, next) => {
-  var sqlStr = sqlString.get.getUser;
-  sqlQuery(sqlStr, res);
+  var sqlStr = getQuery.getUser;
+  setQuery(sqlStr, res);
 });
 /* 获取用户 */
 

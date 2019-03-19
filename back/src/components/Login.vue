@@ -95,9 +95,9 @@ export default {
         this.errors.items.push(rule);
       }
       if (this.errors.items.length > 0) return;
-
       if (this.flag) return;
       this.flag = true;
+
       this.$ajax({
         method: "post",
         url: window.location.origin + "/api/login",
