@@ -8,7 +8,7 @@ function initParams(params) {
   }
   return { keys: keys, vals: values };
 }
-var sqlQuery = {
+var sqlString = {
   get: {
     getAllUser: 'select * from category',
     getUserByName: function (username) {
@@ -17,7 +17,7 @@ var sqlQuery = {
   },
   post: {
     login: function (params) {
-      return `select * from users where username='${username}' and password='${params.password}'`;
+      return `select * from users where username='${params.username}' and password='${params.password}'`;
     },
     register: function (params) {
       params = initParams(params);
@@ -30,4 +30,4 @@ var sqlQuery = {
   }
 }
 
-module.exports = sqlQuery;
+module.exports = sqlString;

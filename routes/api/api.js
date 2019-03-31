@@ -80,29 +80,25 @@ router.post('/login', [
   check('username').isLength({ min: 2, max: 30 }),
   check('password').isLength({ min: 6, max: 30 }),
 ], (req, res, next) => {
-  logRegVelidate();
+  logRegVelidate(req, res);
 
   req.body.password = utility.sha1(utility.md5(req.body.password));
   var sql = postQuery.login(req.body);
-  // setQuery();
+  console.log(sql)
+  setQuery(sql, res, data => {
+    if (data.length <= 0) {
+      return res.status(300).json({
+        msg: '用户名或密码不正确',
+      });
+    }
+  });
 });
 
 router.post('/register', [
   check('username').isLength({ min: 2, max: 30 }),
   check('password').isLength({ min: 6, max: 30 }),
 ], (req, res, next) => {
-  var errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    var err = errors.array()[0];
-    return res.status(300).json({
-      msg: err.param + ' ' + err.msg
-    });
-  }
-  if (!/^[\w一-龥]+$/g.test(req.body.username)) {
-    return res.status(300).json({
-      msg: 'username Invalid value'
-    });
-  }
+  logRegVelidate(req, res);
 
   var testStr = getQuery.getUserByName(req.body.username);
   setQuery(testStr, res, data => {
