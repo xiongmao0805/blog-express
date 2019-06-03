@@ -11,21 +11,18 @@
         <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
         <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('confirm')">{{errors.first('confirm')}}</b>
       </p>
-      <div class="input" @click="focus">
+      <div class="input">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" ref="username" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
-        <span class="tips" v-show="username.length <= 0">用户名</span>
+        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
-      <div class="input" @click="focus">
+      <div class="input">
         <span class="icon icon-lock"></span>
-        <input type="password" name="password" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
-        <span class="tips" v-show="password.length <= 0">密码</span>
+        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
       </div>
-      <div class="input" @click="focus">
+      <div class="input">
         <span class="icon icon-lock"></span>
-        <input type="password" name="confirm" autocomplete="off" v-model="confirm" @blur="testConfirm">
-        <span class="tips" v-show="confirm.length <= 0">重复密码</span>
+        <input type="password" name="confirm" placeholder="请确认密码" autocomplete="off" v-model="confirm" @blur="testConfirm">
       </div>
       <button type="submit" @click="register">Register</button>
     </div>
@@ -86,9 +83,6 @@ export default {
     }
   },
   methods: {
-    focus(e) {
-      this.$refs.username.focus();
-    },
     testConfirm() {
       if (!this.password) return;
       if (this.confirm != this.password) {
@@ -133,7 +127,7 @@ export default {
         });
       }).catch(err => {
         var msg = err.response.data.msg
-        msg = msg ? msg : '失败';
+        msg = msg ? msg : '注册失败';
         this.$layer.msg(msg, () => {
           this.$layer.closeAll();
           this.flag = false;

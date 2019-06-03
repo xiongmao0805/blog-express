@@ -42,7 +42,7 @@ function setQuery(sql, res, fn) {
       return;
     }
 
-    if (!Array.isArray(result)) {
+    if (!Array.isArray(result)) {   // 接口返回值为非数组数据
       res.json({
         count: result.affectedRows,
         msg: '成功',
@@ -84,12 +84,13 @@ router.post('/login', [
 
   req.body.password = utility.sha1(utility.md5(req.body.password));
   var sql = postQuery.login(req.body);
-  console.log(sql)
   setQuery(sql, res, data => {
     if (data.length <= 0) {
       return res.status(300).json({
         msg: '用户名或密码不正确',
       });
+    } else {
+      return res.json(data[0]);
     }
   });
 });
