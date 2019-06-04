@@ -3,22 +3,22 @@
     <slot></slot>
     <div class="wrap">
       <h1>Welcome</h1>
-      <p class="errortip">
+      <p class="errorinfo">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
         <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
       </p>
-      <div class="input">
-        <span class="icon icon-user"></span>
+      <div class="form-item">
+        <i class="icon icon-user"></i>
         <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30" style="padding-right: 20px;">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
-      <div class="input">
-        <span class="icon icon-lock"></span>
+      <div class="form-item">
+        <i class="icon icon-lock"></i>
         <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
       </div>
       <button type="login" @click="login">Login</button>
-      <div class="bottom">
-        <a href="/web" class="back">前往首页</a>
+      <div class="links">
+        <a href="/web" class="fl">前往首页</a>
         <router-link to="register">注册</router-link>
       </div>
     </div>
@@ -124,25 +124,25 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../resource/css/reset.scss";
 @import "../resource/css/log_reg.scss";
+@include reset();
 .login {
   .wrap {
     h1 {
-      font-size: 3rem;
+      font-size: 40px;
       text-align: center;
-      line-height: 5rem;
+      line-height: 70px;
     }
     @include common();
-    .bottom {
+
+    .links {
       text-align: right;
-      margin-top: 1rem;
+      margin-top: 14px;
+      
       a {
-        font-size: 1rem;
         color: #fff;
         padding: 0 5px;
-      }
-      .back {
-        float: left;
       }
     }
   }

@@ -4,23 +4,23 @@
     <div class="wrap">
       <h1>
         <b>注册</b>
-        <span>已有帐号，前往 <router-link to="login">登录</router-link></span>
+        <span class="fr">已有帐号，前往 <router-link to="login">登录</router-link></span>
       </h1>
-      <p class="errortip">
+      <p class="errorinfo">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
         <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
         <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('confirm')">{{errors.first('confirm')}}</b>
       </p>
-      <div class="input">
+      <div class="form-item">
         <span class="icon icon-user"></span>
         <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
-      <div class="input">
+      <div class="form-item">
         <span class="icon icon-lock"></span>
         <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
       </div>
-      <div class="input">
+      <div class="form-item">
         <span class="icon icon-lock"></span>
         <input type="password" name="confirm" placeholder="请确认密码" autocomplete="off" v-model="confirm" @blur="testConfirm">
       </div>
@@ -139,19 +139,23 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../resource/css/reset.scss";
 @import "../resource/css/log_reg.scss";
+@include reset();
 .register {
   .wrap {
     h1 {
-      font-size: 3rem;
-      line-height: 5rem;
-      margin-bottom: 1rem;
+      font-size: 40px;
+      line-height: 70px;
+      margin-bottom: 10px;
+      padding: 0 2px;
+
       span {
-        float: right;
-        font-size: 1rem;
+        font-size: 14px;
         color: rgba(255, 255, 255, 0.75);
-        line-height: 1rem;
-        margin-top: 3rem;
+        line-height: 14px;
+        margin-top: 40px;
+        
         a {
           color: #fff;
         }
