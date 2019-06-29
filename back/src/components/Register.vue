@@ -13,12 +13,12 @@
       </p>
       <div class="form-item">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30">
+        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" maxlength="30">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
-        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
+        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" maxlength="30">
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
@@ -36,6 +36,21 @@ export default {
   name: "register",
   data() {
     return {
+      veeRegex: {
+        username: {
+          required: true,
+          min: 2,
+          max:30,
+          regex: /\w/g
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i
+        },
+        password: {
+          required: true,
+          min: 6,
+          max: 30,
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i
+        }
+      },
       username: "",
       password: "",
       confirm: "",
@@ -58,7 +73,7 @@ export default {
   watch: {
     // 验证用户名是否可用
     username(val, oldval) {
-      if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
+      if (!/^\w/i.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
 
       this.timer = setTimeout(() => {
@@ -68,7 +83,7 @@ export default {
 
         this.$ajax({
           method: "get",
-          url: window.location.origin + "/api/getUserByName/" + val
+          url: window.location.origin + "/api/user/username/" + val
         }).then(res => {
           this.checkState = false;
           if (res.data.length <= 0) {

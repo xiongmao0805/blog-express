@@ -9,12 +9,12 @@
       </p>
       <div class="form-item">
         <i class="icon icon-user"></i>
-        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="'required|min:2|max:30|regex:^[a-zA-Z0-9一-龥_]+$'" maxlength="30" style="padding-right: 20px;">
+        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="veeRegex.username" maxlength="30" style="padding-right: 20px;">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <i class="icon icon-lock"></i>
-        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="'required|min:6|max:30'" maxlength="30">
+        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="veeRegex.password" maxlength="30">
       </div>
       <button type="login" @click="login">Login</button>
       <div class="links">
@@ -32,6 +32,21 @@ export default {
   name: "login",
   data() {
     return {
+      veeRegex: {
+        username: {
+          required: true,
+          min: 2,
+          max: 30,
+          regex: /\w/g
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i
+        },
+        password: {
+          required: true,
+          min: 6,
+          max: 30,
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i
+        }
+      },
       username: "",
       password: "",
       nameEnable: false,
@@ -51,7 +66,7 @@ export default {
   },
   watch: {
     username(val, oldval) {
-      if (!/^[\w一-龥]{2,30}$/g.test(val)) return;
+      if (!/\w/i.test(val)) return;
       if (this.timer) clearTimeout(this.timer);
 
       this.timer = setTimeout(() => {
@@ -62,7 +77,7 @@ export default {
 
         this.$ajax({
           method: "get",
-          url: window.location.origin + "/api/getUserByName/" + val
+          url: window.location.origin + "/api/user/username/" + val
         }).then(res => {
           this.checkState = false;
           if (res.data.length > 0) {
@@ -103,10 +118,10 @@ export default {
       }).then(res => {
         setCookie("token", res.data.token);
         setCookie("userid", res.data.userid);
+        setCookie("username", res.data.username);
         setCookie("level", res.data.level);
         this.$emit("freshCookie");
         this.flag = false;
-        debugger
         if (res.data.level == 1) {
           this.$router.push("/admin");
         } else {
@@ -139,7 +154,7 @@ export default {
     .links {
       text-align: right;
       margin-top: 14px;
-      
+
       a {
         color: #fff;
         padding: 0 5px;
