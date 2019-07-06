@@ -13,16 +13,16 @@
       </p>
       <div class="form-item">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" maxlength="30">
+        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" maxlength="30">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
-        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" maxlength="30">
+        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" maxlength="30">
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
-        <input type="password" name="confirm" placeholder="请确认密码" autocomplete="off" v-model="confirm" @blur="testConfirm">
+        <input type="password" name="confirm" @keyup="onEnter" placeholder="请确认密码" autocomplete="off" v-model="confirm" @blur="testConfirm">
       </div>
       <button type="submit" @click="register">Register</button>
     </div>
@@ -40,7 +40,7 @@ export default {
         username: {
           required: true,
           min: 2,
-          max:30,
+          max: 30,
           regex: /\w/g
           // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i
         },
@@ -82,8 +82,9 @@ export default {
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
+          limit: false,
           method: "get",
-          url: window.location.origin + "/api/user/username/" + val
+          url: "/user/username/" + val
         }).then(res => {
           this.checkState = false;
           if (res.data.length <= 0) {
@@ -110,6 +111,9 @@ export default {
         this.errors.items.push(rule);
       }
     },
+    onEnter: function (e) {
+      if (e.keyCode == 13) this.register();
+    },
     register() {
       if (!this.username || !this.password) return;
       if (this.checkState) return;
@@ -128,24 +132,29 @@ export default {
       this.flag = true;
 
       this.$ajax({
+        limit: false,
         method: "post",
-        url: window.location.origin + "/api/register",
+        url: "/register",
         data: {
           username: this.username,
           password: this.password
         }
       }).then(res => {
-        this.$layer.msg(res.data.msg, () => {
-          this.$layer.closeAll();
-          this.$router.push("/admin/login");
-          this.flag = false;
+        this.$layer({
+          content: res.data.msg,
+          callback: function () {
+            this.$router.push("/admin/login");
+            this.flag = false;
+          }
         });
       }).catch(err => {
         var msg = err.response.data.msg
         msg = msg ? msg : '注册失败';
-        this.$layer.msg(msg, () => {
-          this.$layer.closeAll();
-          this.flag = false;
+        this.$layer({
+          content: msg,
+          callback: function () {
+            this.flag = false;
+          }
         });
       });
     }
@@ -170,7 +179,7 @@ export default {
         color: rgba(255, 255, 255, 0.75);
         line-height: 14px;
         margin-top: 40px;
-        
+
         a {
           color: #fff;
         }

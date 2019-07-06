@@ -29,7 +29,7 @@ export default new Router({
   routes: [
     {
       path: '/admin',
-      // name: 'admin',
+      name: 'admin',
       component: Major,
     },
     {

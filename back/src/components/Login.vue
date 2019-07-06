@@ -9,12 +9,12 @@
       </p>
       <div class="form-item">
         <i class="icon icon-user"></i>
-        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="veeRegex.username" maxlength="30" style="padding-right: 20px;">
+        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="veeRegex.username" maxlength="30" style="padding-right: 20px;">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <i class="icon icon-lock"></i>
-        <input type="password" name="password" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="veeRegex.password" maxlength="30">
+        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="veeRegex.password" maxlength="30">
       </div>
       <button type="login" @click="login">Login</button>
       <div class="links">
@@ -76,8 +76,9 @@ export default {
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
+          limit: false,
           method: "get",
-          url: window.location.origin + "/api/user/username/" + val
+          url: "/user/username/" + val
         }).then(res => {
           this.checkState = false;
           if (res.data.length > 0) {
@@ -92,6 +93,9 @@ export default {
     }
   },
   methods: {
+    onEnter: function (e) {
+      if (e.keyCode == 13) this.login();
+    },
     login() {
       if (!this.username || !this.password) return;
       if (this.checkState) return;
@@ -109,8 +113,9 @@ export default {
       this.flag = true;
 
       this.$ajax({
+        limit: false,
         method: "post",
-        url: window.location.origin + "/api/login",
+        url: "/login",
         data: {
           username: this.username,
           password: this.password
@@ -128,9 +133,11 @@ export default {
           this.$router.push("/web");
         }
       }).catch(err => {
-        this.$layer.msg("用户名或密码不正确", () => {
-          this.$layer.closeAll();
-          this.flag = false;
+        this.$layer({
+          content: "用户名或密码不正确",
+          callback: function () {
+            this.flag = false;
+          }
         });
       });
     }

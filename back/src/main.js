@@ -1,17 +1,23 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
-import App from './App'
-import router from './router'
-import store from '@/store'
-import axios from 'axios'
-import layer from 'vue-layer'
-import Validate, { Validator } from 'vee-validate'
-import zh_CN from 'vee-validate/dist/locale/zh_CN'
+import Vue from 'vue';
+import App from './App';
+import router from './router';
+import store from '@/store';
+import Validate, { Validator } from 'vee-validate';
+import { xm_ajax, xm_layer } from '@/resource/js/xm_control.js';
+import zh_CN from 'vee-validate/dist/locale/zh_CN';
 
-Vue.config.productionTip = false
-Vue.prototype.$ajax = axios           //ajax
-Vue.prototype.$layer = layer(Vue)     //弹窗
+Vue.config.productionTip = false;
+
+// ajax
+Vue.prototype.$ajax = function (options) {
+  return xm_ajax(Vue, options);
+}
+// 弹窗组件
+Vue.prototype.$layer = function (options) {
+  return xm_layer(Vue, options);
+}
 
 // 表单验证
 // 自定义验证规则

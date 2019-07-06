@@ -1,26 +1,26 @@
 <template>
-    <div class="index">
-        <div class="header">
-            <p class="brand">后台管理系统</p>
-            <div class="nav">
-                <a href="/web" title="首页"><span class="icon-home"></span></a>
-                <a title="登出" @click="loginOut"><span class="icon icon-switch"></span></a>
-            </div>
-        </div>
-        <div class="flexBox">
-            <div class="menu">
-                <p><router-link :to="{name:'index'}"><i class="icon-newspaper"></i>总览</router-link></p>
-                <p><router-link :to="{name:'category'}"><i class="icon-pie-chart"></i>分类管理</router-link></p>
-                <p><router-link :to="{name:'article'}"><i class="icon-books"></i>文章管理</router-link></p>
-                <p><router-link :to="{name:'comment'}"><i class="icon-bubble" style="font-size: 1.25rem;"></i>评论管理</router-link></p>
-                <p><router-link :to="{name:'users'}"><i class="icon-user" style="font-size: 1.4rem;"></i>用户列表</router-link></p>
-                <p><router-link :to="{name:'links'}"><i class="icon-link"></i>友情链接</router-link></p>
-                <p><router-link :to="{name:'config'}"><i class="icon-cog"></i>网站配置</router-link></p>
-            </div>
-            <keep-alive><router-view class="main"></router-view></keep-alive>
-        </div>
-        <footer>Copyright 2017 Design by XiongMao</footer>
+  <div class="index">
+    <div class="header">
+      <p class="brand">后台管理系统</p>
+      <div class="nav">
+        <a href="/web" title="首页"><span class="icon-home"></span></a>
+        <a title="登出" @click="loginOut"><span class="icon icon-switch"></span></a>
+      </div>
     </div>
+    <div class="flexBox">
+      <div class="menu">
+        <!-- <p><router-link :to="{name:'index'}"><i class="icon-newspaper"></i>总览</router-link></p>
+        <p><router-link :to="{name:'category'}"><i class="icon-pie-chart"></i>分类管理</router-link></p>
+        <p><router-link :to="{name:'article'}"><i class="icon-books"></i>文章管理</router-link></p>
+        <p><router-link :to="{name:'comment'}"><i class="icon-bubble" style="font-size: 1.25rem;"></i>评论管理</router-link></p>
+        <p><router-link :to="{name:'users'}"><i class="icon-user" style="font-size: 1.4rem;"></i>用户列表</router-link></p>
+        <p><router-link :to="{name:'links'}"><i class="icon-link"></i>友情链接</router-link></p>
+        <p><router-link :to="{name:'config'}"><i class="icon-cog"></i>网站配置</router-link></p> -->
+      </div>
+      <keep-alive><router-view class="main"></router-view></keep-alive>
+    </div>
+    <footer>Copyright 2019 Designed by xm</footer>
+  </div>
 </template>
 
 <script>
@@ -32,10 +32,10 @@ export default {
     //未操作页面自动退出登录
     let timer;
     window.onmousemove = function () {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        setCookie('token', '', -1);
-      }, 20 * 60 * 1000);
+      // clearTimeout(timer);
+      // timer = setTimeout(() => {
+      //   setCookie('token', '', -1);
+      // }, 20 * 60 * 1000);
     }
   },
   computed: {
@@ -49,19 +49,19 @@ export default {
       window.location.reload();
     },
     tokenFresh() {
-      this.$ajax({
-        method: 'post',
-        url: '/api/fresh',
-        headers: {
-          token: getCookie('token')
-        }
-      }).then((res) => {
-        if (res.data.resultCode == 200) {
-          this.freshed = true;
-          let newtoken = res.headers.authorization.split('Bearer ')[1];
-          setCookie('token', newtoken);
-        }
-      });
+      // this.$ajax({
+      //   method: 'post',
+      //   url: '/api/fresh',
+      //   headers: {
+      //     token: getCookie('token')
+      //   }
+      // }).then((res) => {
+      //   if (res.data.resultCode == 200) {
+      //     this.freshed = true;
+      //     let newtoken = res.headers.authorization.split('Bearer ')[1];
+      //     setCookie('token', newtoken);
+      //   }
+      // });
     }
   }
 }

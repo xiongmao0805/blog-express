@@ -22,7 +22,6 @@ router.post('/', logRegCheck, (req, res, next) => {
   req.body.password = crypto.createHmac('md5', 'xm_blog').update(req.body.password).digest('hex');
   var sql = `select * from users where username='${req.body.username}' and password='${req.body.password}'`;
   xmQuery(sql, res, data => {
-    debugger
     if (data.length <= 0) {
       return res.status(300).json({
         msg: '用户名或密码不正确',

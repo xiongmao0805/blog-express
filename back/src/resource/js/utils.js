@@ -1,3 +1,4 @@
+// cookie
 export function setCookie(key, value, time) {
   if (!time) time = 60 * 60 * 1000;
   let timestamp = Date.parse(new Date());
@@ -17,7 +18,8 @@ export function getCookie(key) {
   return "";
 }
 
-export function formatDate(timestamp, flag) {    //格式化日期
+// 格式化日期
+export function formatDate(timestamp, flag) {
   let date = timestamp ? new Date(timestamp * 1000) : new Date();
   let year = date.getFullYear(), month = date.getMonth(), days = date.getDay();
   month = month < 10 ? '0' + month : month;
