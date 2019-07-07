@@ -1,12 +1,16 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
 
-var login = require('./login');
-var register = require('./register');
-var user = require('./user');
+let login = require('./login');
+let register = require('./register');
+let user = require('./user');
 
 router.use('/login', login);
 router.use('/register', register);
 router.use('/user', user);
+
+router.get('/favicon.ico',  (req, res, next) => {
+  // next();
+});
 
 module.exports = router;
