@@ -104,7 +104,7 @@ export default {
       if (!this.username || !this.password) return;
       if (this.checkState) {
         this.$layer({
-          content: '请检查用户名是否可用',
+          content: '请检查用户名是否可用！',
         });
         return;
       }

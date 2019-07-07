@@ -29,14 +29,22 @@ import { getCookie, setCookie } from "@/resource/js/utils.js";
 export default {
   name: 'major',
   mounted() {
-    //未操作页面自动退出登录
+    // 20自动刷新token
     let timer;
-    window.onmousemove = function () {
-      // clearTimeout(timer);
-      // timer = setTimeout(() => {
-      //   setCookie('token', '', -1);
-      // }, 20 * 60 * 1000);
-    }
+    // timer = setTimeout(() => {
+      this.$ajax({
+        type: 'get',
+        url: '/user/token/freshToken',
+      }).then(res => {
+        console.log(res)
+      });
+    // }, 20 * 60 * 1000);
+    // window.onmousemove = function () {
+    // clearTimeout(timer);
+    // timer = setTimeout(() => {
+    //   setCookie('token', '', -1);
+    // }, 20 * 60 * 1000);
+    // }
   },
   computed: {
     path() {

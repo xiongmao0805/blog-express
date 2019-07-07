@@ -7,13 +7,13 @@ import store from '@/store';
 import { xm_ajax, xm_layer, xm_validate } from '@/resource/js/xm_control.js';
 
 Vue.config.productionTip = false;
-xm_validate(Vue);     // 表单验证
+xm_validate(Vue);     // 注册表单验证
 
-// ajax
+// 注册ajax
 Vue.prototype.$ajax = function (options) {
   return xm_ajax(Vue, options);
 }
-// 弹窗组件
+// 注册弹窗组件
 Vue.prototype.$layer = function (options) {
   return xm_layer(Vue, options);
 }

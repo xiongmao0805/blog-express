@@ -46,7 +46,7 @@ export function formatHtml(str) {
   return text.replace(/&nbsp;/g, ' ');
 }
 export function toBase64(vue, img, field) {   //图片转为base64
-  var reader = new FileReader();
+  let reader = new FileReader();
   reader.readAsDataURL(img);
   let timer = setInterval(() => {
     if (reader.readyState == 2) {

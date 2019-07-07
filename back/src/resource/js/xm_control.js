@@ -1,4 +1,4 @@
-var vue;
+let vue;
 import axios from 'axios';
 import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
@@ -58,7 +58,7 @@ ajax.interceptors.request.use(function (req) {
   // limit为false的请求，不做处理
   if (req.limit === false) return req;
 
-  var userid = getCookie('userid'),
+  let userid = getCookie('userid'),
     username = getCookie('username'),
     token = getCookie('token');
   req.headers.userid = userid;
@@ -66,7 +66,7 @@ ajax.interceptors.request.use(function (req) {
   req.headers.token = token;
   return req
 }, function (err) {
-  var msg = "请求失败：" + err.message;
+  let msg = "请求失败：" + err.message;
   vue.prototype.$layer({
     content: "请求失败：" + res.data.msg,
     status: 'danger'
@@ -85,7 +85,7 @@ ajax.interceptors.response.use(function (res) {
   }
   return res;
 }, function (err) {
-  var msg = "请求失败：" + err.message;
+  let msg = "请求失败：" + err.message;
   vue.prototype.$layer({
     content: "请求失败：" + res.data.msg,
     status: 'danger'
