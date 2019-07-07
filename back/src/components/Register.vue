@@ -13,12 +13,12 @@
       </p>
       <div class="form-item">
         <span class="icon icon-user"></span>
-        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" maxlength="30">
+        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-validate="regParam.username" v-model="username" maxlength="30">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
-        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" maxlength="30">
+        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-validate="regParam.password" v-model="password" maxlength="30">
       </div>
       <div class="form-item">
         <span class="icon icon-lock"></span>
@@ -36,7 +36,7 @@ export default {
   name: "register",
   data() {
     return {
-      veeRegex: {
+      regParam: {
         username: {
           required: true,
           min: 2,
@@ -112,11 +112,20 @@ export default {
       }
     },
     onEnter: function (e) {
-      if (e.keyCode == 13) this.register();
+      if (e.keyCode == 13) {
+        this.$validator.validate().then(valid => {
+          if (valid) this.register();
+        });
+      }
     },
     register() {
       if (!this.username || !this.password) return;
-      if (this.checkState) return;
+      if (this.checkState) {
+        this.$layer({
+          content: '请检查用户名是否可用',
+        });
+        return;
+      }
       if (!this.nameEnable) {
         let rule = {
           field: "username",

@@ -9,12 +9,12 @@
       </p>
       <div class="form-item">
         <i class="icon icon-user"></i>
-        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="veeRegex.username" maxlength="30" style="padding-right: 20px;">
+        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="regParam.username" maxlength="30" style="padding-right: 20px;">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
         <i class="icon icon-lock"></i>
-        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="veeRegex.password" maxlength="30">
+        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="regParam.password" maxlength="30">
       </div>
       <button type="login" @click="login">Login</button>
       <div class="links">
@@ -32,19 +32,19 @@ export default {
   name: "login",
   data() {
     return {
-      veeRegex: {
+      regParam: {
         username: {
           required: true,
           min: 2,
           max: 30,
           regex: /\w/g
-          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i   字母和数字组合，可包含_
         },
         password: {
           required: true,
           min: 6,
           max: 30,
-          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i   字母和数字组合
         }
       },
       username: "",
@@ -94,11 +94,20 @@ export default {
   },
   methods: {
     onEnter: function (e) {
-      if (e.keyCode == 13) this.login();
+      if (e.keyCode == 13) {
+        this.$validator.validate().then(valid => {
+          if (valid) this.login();
+        });
+      }
     },
     login() {
       if (!this.username || !this.password) return;
-      if (this.checkState) return;
+      if (this.checkState) {
+        this.$layer({
+          content: '请检查用户名是否可用',
+        });
+        return;
+      }
       if (!this.nameEnable) {
         let rule = {
           field: "username",

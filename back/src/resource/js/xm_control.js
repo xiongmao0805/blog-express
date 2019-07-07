@@ -1,7 +1,9 @@
 var vue;
 import axios from 'axios';
 import layer from 'vue-layer';
+import Validate, { Validator } from 'vee-validate';
 import { getCookie } from './utils';
+import zh_CN from 'vee-validate/dist/locale/zh_CN';
 
 export function xm_layer(Vue, options) {
   Vue.prototype.$xm_layer = layer(Vue, {
@@ -45,7 +47,7 @@ export function xm_ajax(Vue, options) {
 }
 
 // 创建ajax实例
-var ajax = axios.create({
+const ajax = axios.create({
   baseURL: window.location.origin + '/api',
   timeout: 5000,
 });
@@ -54,9 +56,8 @@ var ajax = axios.create({
 ajax.interceptors.request.use(function (req) {
   // console.log(req);
   // limit为false的请求，不做处理
-  if (req.limit === false) {
-    return req;
-  }
+  if (req.limit === false) return req;
+
   var userid = getCookie('userid'),
     username = getCookie('username'),
     token = getCookie('token');
@@ -91,3 +92,45 @@ ajax.interceptors.response.use(function (res) {
   });
   return Promise.reject(err);
 });
+
+// 表单验证
+export function xm_validate(Vue) {
+  // 自定义验证规则
+  Validator.extend('phone', {
+    getMessage: (field, params, data) => data.message,
+    validate: value => /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/.test(value)
+  });
+  // 自定义错误提示
+  const dictionary = {
+    zh_CN: {
+      messages: {
+        required: (field) => field + '不可为空',
+        min: (field, leng) => field + '不得少于' + leng + '位字符',
+        max: (field, leng) => field + '不得多于' + leng + '位字符',
+        regex: function (field) {
+          switch (field) {
+            default:
+              return field + '不合法';
+          }
+        },
+        phone: () => '无效的手机号码',
+        email: () => '邮箱格式不正确',
+        url: () => '无效的链接地址'
+      },
+      attributes: {
+        username: '用户名',
+        password: '密码',
+        email: '邮箱',
+        phone: '手机号',
+      }
+    }
+  };
+  Validator.localize(dictionary);
+
+  const config = {
+    locale: 'zh_CN',
+    events: 'blur',
+    strict: true
+  }
+  Vue.use(Validate, config);
+}
