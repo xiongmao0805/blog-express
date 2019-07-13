@@ -46,7 +46,7 @@ const mylayer = function (options) {
 // 创建ajax实例
 const myaxios = axios.create({
   baseURL: window.location.origin + '/api',
-  timeout: 5000,
+  timeout: 10000,
 });
 // 统一处理请求
 myaxios.interceptors.request.use(function (req) {
@@ -78,21 +78,44 @@ myaxios.interceptors.response.use(function (res) {
   }
   return res;
 }, function (err) {
+  if (err.message.indexOf('timeout') >= 0) {
+    mylayer({
+      content: "请示超时！",
+    });
+    return;
+  }
+
   let res = err.response,
-    status = res.status;
-  if (status == 504 || status == 404) {
-    mylayer({
-      content: "请求失败：" + res.data,
-      status: 'danger'
-    });
-  } else if (status == 403) {
-    mylayer({
-      content: "权限不足，请联系管理员！",
-    });
-  } else {
-    mylayer({
-      content: "未知错误！",
-    });
+    status = res ? res.status : '';
+
+  switch (status) {
+    case 504:
+      mylayer({
+        content: "请求失败：" + res.data,
+        status: 'danger'
+      });
+      break;
+    case 404:
+      mylayer({
+        content: "请求失败：" + res.data,
+        status: 'danger'
+      });
+      break;
+    case 403:
+      mylayer({
+        content: "权限不足，请联系管理员！",
+      });
+      break;
+    case 300:
+      mylayer({
+        content: res.data.msg,
+      });
+      break;
+    default:
+      mylayer({
+        content: "未知错误！",
+      });
+      break;
   }
   return Promise.reject(err);
 });

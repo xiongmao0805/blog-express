@@ -1,3 +1,5 @@
+let crypto = require("crypto-js");   // 加密组件
+
 // cookie
 export function setCookie(key, value, time) {
   if (!time) time = 60 * 60 * 1000;
@@ -17,6 +19,45 @@ export function getCookie(key) {
   }
   return "";
 }
+
+/* 加密解密功能 */
+// 将字符串转为16进制
+export function uniCode16(str) {
+  if (typeof str !== 'string') return '';
+  let res = '';
+  for (let i = 0; i < str.length; i++) {
+    res += str.charCodeAt(i).toString(16);
+  }
+  return res;
+}
+// 加密解密所使用的key，必须为字符串转为16进制字符，并且转后长度为16位
+let key = uniCode16('blog_key');
+// 加密解密所使用的iv，必须为字符串转为16进制字符，并且转后长度为16位
+let iv = uniCode16('qjl_blog');
+let cryptoConfig = {
+  iv: iv,
+  mode: crypto.mode.CBC,
+  padding: crypto.pad.Pkcs7
+}
+// 加密
+export function encrypt(str) {
+  if (typeof str === 'string') {
+    let chiper = crypto.AES.encrypt(str, key, cryptoConfig);
+    let res = chiper.toString();
+    return res;
+  }
+  return false;
+}
+// 解密
+export function decrypt(str) {
+  if (typeof str === 'string') {
+    let chiper = crypto.AES.decrypt(str, key, cryptoConfig);
+    let res = chiper.toString(crypto.enc.Utf8);
+    return res;
+  }
+  return false;
+}
+/* 加密解密功能 */
 
 // 格式化日期
 export function formatDate(timestamp, flag) {
