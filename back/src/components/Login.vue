@@ -52,6 +52,7 @@ export default {
       nameEnable: false,
       checkState: false,
       timer: "",
+      flag: false
     };
   },
   created() {
@@ -78,17 +79,17 @@ export default {
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
-          limit: false,
+          middleware: false,
+          catch: true,
           method: "get",
           url: "/user/username/" + val
         }).then(res => {
-          this.checkState = false;
           if (res.data.length > 0) {
             this.nameEnable = true;
           } else {
             this.nameEnable = false;
           }
-        }).catch(err => {
+        }).always(() => {
           this.checkState = false;
         });
       }, 800);
@@ -120,9 +121,11 @@ export default {
         this.errors.items.push(rule);
       }
       if (this.errors.items.length > 0) return;
+      if (this.flag) return;
+      this.flag = true;
 
       this.$ajax({
-        limit: false,
+        middleware: false,
         method: "post",
         url: "/login",
         data: {
@@ -140,6 +143,8 @@ export default {
         } else {
           this.$router.push("/web");
         }
+      }).always(() => {
+        this.flag = false;
       });
     }
   }

@@ -4,6 +4,7 @@ import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
 import { getCookie } from './utils';
 import zh_CN from 'vee-validate/dist/locale/zh_CN';
+require('es6-promise-always');  // 扩展axios.always
 
 // 注册弹窗组件
 Vue.prototype._layer = layer(Vue, {
@@ -51,8 +52,8 @@ const myaxios = axios.create({
 // 统一处理请求
 myaxios.interceptors.request.use(function (req) {
   // console.log(req);
-  // limit为false的请求，不做处理
-  if (req.limit === false) return req;
+  // middleware 为 false的请求，不走中间键，不做处理，部分接口可以不走中间键
+  if (req.middleware === false) return req;
 
   let userid = getCookie('userid'),
     username = getCookie('username'),
@@ -70,12 +71,6 @@ myaxios.interceptors.request.use(function (req) {
 });
 // 统一处理返回
 myaxios.interceptors.response.use(function (res) {
-  if (res.status !== 200) {
-    mylayer({
-      content: "请求失败：" + res.data.msg,
-      status: 'warning'
-    });
-  }
   return res;
 }, function (err) {
   if (err.message.indexOf('timeout') >= 0) {
@@ -86,8 +81,14 @@ myaxios.interceptors.response.use(function (res) {
   }
 
   let res = err.response,
-    status = res ? res.status : '';
+    status = res ? res.status : '',
+    xhrConfig = res ? res.config : '',
+    errCatch = xhrConfig ? xhrConfig.catch : '';
 
+  // 请求头catch为false的请求，不处理错误
+  if (errCatch === true) {
+    return err;
+  }
   switch (status) {
     case 504:
       mylayer({
@@ -107,6 +108,10 @@ myaxios.interceptors.response.use(function (res) {
       });
       break;
     case 300:
+      // 请求头catch为300的请求，自行处理300错误代码
+      if (errCatch == 300) {
+        return err;
+      }
       mylayer({
         content: res.data.msg,
       });
