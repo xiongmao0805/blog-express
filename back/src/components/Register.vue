@@ -57,7 +57,6 @@ export default {
       nameEnable: false,
       checkState: false,
       timer: "",
-      flag: false
     };
   },
   created() {
@@ -73,7 +72,10 @@ export default {
   watch: {
     // 验证用户名是否可用
     username(val, oldval) {
-      if (!/^\w/i.test(val)) return;
+      if (!/^\w{2}/i.test(val)) {
+        this.nameEnable = false;
+        return;
+      }
       if (this.timer) clearTimeout(this.timer);
 
       this.timer = setTimeout(() => {
@@ -137,8 +139,6 @@ export default {
       }
       this.testConfirm();
       if (this.errors.items.length > 0) return;
-      if (this.flag) return;
-      this.flag = true;
 
       this.$ajax({
         limit: false,
@@ -149,20 +149,11 @@ export default {
           password: this.password
         }
       }).then(res => {
+        let _this = this;
         this.$layer({
-          content: res.data.msg,
+          content: '注册成功',
           callback: function () {
-            this.$router.push("/admin/login");
-            this.flag = false;
-          }
-        });
-      }).catch(err => {
-        var msg = err.response.data.msg
-        msg = msg ? msg : '注册失败';
-        this.$layer({
-          content: msg,
-          callback: function () {
-            this.flag = false;
+            _this.$router.push("/admin/login");
           }
         });
       });

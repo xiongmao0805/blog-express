@@ -52,7 +52,6 @@ export default {
       nameEnable: false,
       checkState: false,
       timer: "",
-      flag: false
     };
   },
   created() {
@@ -66,7 +65,10 @@ export default {
   },
   watch: {
     username(val, oldval) {
-      if (!/\w/i.test(val)) return;
+      if (!/^\w{2}/i.test(val)) {
+        this.nameEnable = false;
+        return;
+      }
       if (this.timer) clearTimeout(this.timer);
 
       this.timer = setTimeout(() => {
@@ -118,8 +120,6 @@ export default {
         this.errors.items.push(rule);
       }
       if (this.errors.items.length > 0) return;
-      if (this.flag) return;
-      this.flag = true;
 
       this.$ajax({
         limit: false,
@@ -135,19 +135,11 @@ export default {
         setCookie("username", res.data.username);
         setCookie("level", res.data.level);
         this.$emit("freshCookie");
-        this.flag = false;
         if (res.data.level == 1) {
           this.$router.push("/admin");
         } else {
           this.$router.push("/web");
         }
-      }).catch(err => {
-        this.$layer({
-          content: "用户名或密码不正确",
-          callback: function () {
-            this.flag = false;
-          }
-        });
       });
     }
   }
