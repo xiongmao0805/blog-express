@@ -2,7 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
-import { getCookie } from './utils';
+import { setCookie, getCookie } from './utils';
 import zh_CN from 'vee-validate/dist/locale/zh_CN';
 require('es6-promise-always');  // 扩展axios.always
 
@@ -51,7 +51,19 @@ const myaxios = axios.create({
 });
 // 统一处理请求
 myaxios.interceptors.request.use(function (req) {
+  if (req.type === 'get' && typeof req.data === 'object') {
+    let data = req.data;
+
+    for (var key in data) {
+      if (req.url.indexOf('?') < 0) {
+        req.url += `?${key}=${data[key]}`;
+      } else {
+        req.url += `&${key}=${data[key]}`;
+      }
+    }
+  }
   // console.log(req);
+
   // middleware 为 false的请求，不走中间键，不做处理，部分接口可以不走中间键
   if (req.middleware === false) return req;
 
@@ -61,6 +73,7 @@ myaxios.interceptors.request.use(function (req) {
   req.headers.userid = userid;
   req.headers.username = username;
   req.headers.token = token;
+
   return req
 }, function (err) {
   debugger
@@ -73,11 +86,12 @@ myaxios.interceptors.request.use(function (req) {
 myaxios.interceptors.response.use(function (res) {
   return res;
 }, function (err) {
+  // console.log(err);
   if (err.message.indexOf('timeout') >= 0) {
     mylayer({
       content: "请示超时！",
     });
-    return;
+    return Promise.reject(err);
   }
 
   let res = err.response,
@@ -105,6 +119,20 @@ myaxios.interceptors.response.use(function (res) {
     case 403:
       mylayer({
         content: "权限不足，请联系管理员！",
+      });
+      break;
+    case 402:
+      mylayer({
+        content: "签名不正确！",
+      });
+      break;
+    case 304:
+      mylayer({
+        content: "token 已过期，请重新登录！",
+        callback: function () {
+          setCookie(token, '');
+          window.location.reload();
+        }
       });
       break;
     case 300:
