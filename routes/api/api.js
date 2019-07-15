@@ -10,7 +10,7 @@ router.use('/register', register);
 router.use('/user', user);
 
 router.get('/favicon.ico',  (req, res, next) => {
-  // next();
+  res.end();
 });
 
 module.exports = router;

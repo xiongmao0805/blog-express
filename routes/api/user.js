@@ -1,12 +1,13 @@
 let express = require('express');
 let router = express.Router();
-let { myquery, encrypt, decrypt } = require('../../resource/api_utils');
+let crypto = require("crypto-js");   // 加密组件
+let { myquery, tokenCheck } = require('../../resource/utils');
 
 // 创建管理员账号
 router.get('/master', (req, res, next) => {
   myquery('select * from users where username="xm_master"', res, function (result) {
     if (result.length <= 0) {
-      let password = encrypt('qjl252363??');
+      let password = crypto.MD5('qjl252363??');
       let keys = ['level', 'username', 'password', 'sex', 'mobile', 'email', 'avatar', 'birthday'];
       let values = [1, '"xm_master"', `"${password}"`, 1, '"13107705855"', '"qjl_0805@126.com"', '"admin_avatar.png"', '"1990-09-23"'];
       myquery(`insert into users (${keys.join(',')}) values (${values.join(',')})`, res);
@@ -26,11 +27,11 @@ router.get('/username/:name', (req, res, next) => {
 });
 
 router.get('/token/*', (req, res, next) => {
-  
+  tokenCheck(req, res);
   next();
 });
 router.get('/token/freshToken', (req, res, next) => {
-  res.end(1)
+  res.json({})
 });
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import router from '../../router/index';
 import axios from 'axios';
 import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
@@ -130,8 +131,8 @@ myaxios.interceptors.response.use(function (res) {
       mylayer({
         content: "token 已过期，请重新登录！",
         callback: function () {
-          setCookie(token, '');
-          window.location.reload();
+          setCookie('token', '');
+          router.replace("/admin/login");
         }
       });
       break;

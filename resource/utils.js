@@ -67,8 +67,23 @@ let decrypt = function (str) {
   return false;
 }
 
-let tokenCheck = function (req) {
-  let isValid;
+let tokenCheck = function (req, res) {
+  let token = req.headers.token;
+  if (!token) {
+    res.status(304).json({
+      msg: 'token expired'
+    });
+    return;
+  }
+
+  let timestamp = decrypt(token).split('=')[3] / 1000,
+    timestamp1 = Date.parse(new Date()) / 1000;
+
+  if (timestamp1 - timestamp > 30 * 60 ) {
+    res.status(304).json({
+      msg: 'token expired'
+    });
+  }
 }
 
 let formatParams = function (params) {

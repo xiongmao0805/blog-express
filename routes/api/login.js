@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
-let {myquery, encrypt} = require('../../resource/api_utils');
+let crypto = require("crypto-js");   // 加密组件
+let { myquery, encrypt } = require('../../resource/utils');
 let { check, validationResult } = require('express-validator/check');
 
 // 参数验证
@@ -18,7 +19,7 @@ router.post('/', logRegCheck, (req, res, next) => {
     });
   }
   // 密码加密
-  req.body.password = encrypt(req.body.password);
+  req.body.password = crypto.MD5(req.body.password);
   let sql = `select * from users where username='${req.body.username}' and password='${req.body.password}'`;
   myquery(sql, res, data => {
     if (data.length <= 0) {
@@ -27,7 +28,7 @@ router.post('/', logRegCheck, (req, res, next) => {
       });
     } else {
       let userinfo = data[0];
-      let token = `userid=${userinfo.userid}&username=${userinfo.username}&timestamp=${Date.parse(new Date())}`;
+      let token = `userid=${userinfo.userid};username=${userinfo.username};timestamp=${Date.parse(new Date())}`;
       token = encrypt(token);
       userinfo.token = token;
       userinfo.birthday = userinfo.birthday.toLocaleDateString();

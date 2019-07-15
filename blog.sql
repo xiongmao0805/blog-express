@@ -11,7 +11,7 @@
  Target Server Version : 50725
  File Encoding         : 65001
 
- Date: 04/03/2019 00:19:18
+ Date: 09/07/2019 23:17:47
 */
 
 SET NAMES utf8mb4;
@@ -189,6 +189,11 @@ CREATE TABLE `users`  (
   `register_time` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `login_time` varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`userid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES (1, 1, 'xm_master', '729cb22fafbef946423c654feed3d582', 1, '13107705855', 'qjl_0805@126.com', 'admin_avatar.png', '1990-09-23', NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

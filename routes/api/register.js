@@ -1,6 +1,7 @@
 let express = require('express');
 let router = express.Router();
-let { myquery, encrypt } = require('../../resource/api_utils');
+let crypto = require("crypto-js");   // 加密组件
+let { myquery, formatParams } = require('../../resource/utils');
 let { check, validationResult } = require('express-validator/check');
 
 // 参数验证
@@ -9,7 +10,7 @@ let logRegCheck = [
   check("username").matches(/\w/g).withMessage('Invalid value'),
   check("password").isLength({ min: 6, max: 30 }).withMessage('length must be 6-30 characters'),
 ];
-router.post('/register', logRegCheck, (req, res, next) => {
+router.post('/', logRegCheck, (req, res, next) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     let err = errors.array()[0];
@@ -26,7 +27,7 @@ router.post('/register', logRegCheck, (req, res, next) => {
       });
     }
     // 密码加密
-    req.body.password = encrypt(req.body.password);
+    req.body.password = crypto.MD5(req.body.password);
     let params = formatParams(req.body);
     let keys = params.keys, vals = params.vals;
     let sql2 = `insert into users (${keys.join(',')}) values (${vals.join(',')})`;
