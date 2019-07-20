@@ -59,6 +59,61 @@ export function decrypt(str) {
 }
 /* 加密解密功能 */
 
+// ascii排序
+export function asciiSort(a, b, key, flag) {
+  if (typeof a === 'object') a = a[key], b = b[key];
+  if (typeof a === 'string') flag = key;
+
+  if (a < b) {
+    if (flag === false) return 1;
+    return -1;
+  }
+  if (a > b) {
+    if (flag === false) return -1;
+    return 1;
+  }
+  return 0;
+}
+// 接口入参获取签名
+export function getSign(params) {
+  if (typeof params !== 'object' || Array.isArray(params)) {
+    return;
+  }
+
+  let sign_params = [], secret = "xm_blog";
+  params.timestamp = Date.parse(new Date());
+  for (let key in params) {
+    let val = params[key];
+    if (typeof val === "undefined" || val === null || val === '') {
+      delete params[key];
+      continue;
+    }
+    if (/\W/g.test(key)) {
+      delete params[key];
+      console.warn('接口请求参数名key请不要使用特殊字符，但可使用字母数字_');
+      continue;
+    }
+    let p = { key: key };
+    if (typeof val === 'object') {
+      p.val = JSON.stringify(val);
+    } else {
+      p.val = String(val);
+    }
+    sign_params.push(p);
+  }
+
+  let str = '';
+  let arr = sign_params.sort(function (a, b) {
+    return asciiSort(a, b, 'key');
+  });
+  arr.forEach(a => {
+    str += a.key + a.val;
+  });
+  let sign = crypto.MD5(secret + str + secret).toString().toUpperCase();
+  params.sign = sign;
+  return params;
+}
+
 // 格式化日期
 export function formatDate(timestamp, flag) {
   let date = timestamp ? new Date(timestamp * 1000) : new Date();

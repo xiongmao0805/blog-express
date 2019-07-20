@@ -27,7 +27,7 @@ router.post('/', logRegCheck, (req, res, next) => {
       });
     }
     // 密码加密
-    req.body.password = crypto.MD5(req.body.password);
+    req.body.password = crypto.MD5(req.body.password).toString().toUpperCase();
     let params = formatParams(req.body);
     let keys = params.keys, vals = params.vals;
     let sql2 = `insert into users (${keys.join(',')}) values (${vals.join(',')})`;

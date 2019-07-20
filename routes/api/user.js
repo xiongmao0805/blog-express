@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let crypto = require("crypto-js");   // 加密组件
-let { myquery, tokenCheck } = require('../../resource/utils');
+let { myquery, checkSign, checkToken } = require('../../resource/utils');
 
 // 创建管理员账号
 router.get('/master', (req, res, next) => {
@@ -26,12 +26,13 @@ router.get('/username/:name', (req, res, next) => {
   myquery(sql, res);
 });
 
-router.get('/token/*', (req, res, next) => {
-  tokenCheck(req, res);
+router.use('/token/', (req, res, next) => {
+  checkSign(req, res);
+  checkToken(req, res);
   next();
 });
-router.get('/token/freshToken', (req, res, next) => {
-  res.json({})
+router.post('/token/freshToken', (req, res, next) => {
+  res.json({});
 });
 
 module.exports = router;

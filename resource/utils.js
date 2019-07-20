@@ -67,7 +67,7 @@ let decrypt = function (str) {
   return false;
 }
 
-let tokenCheck = function (req, res) {
+let checkToken = function (req, res) {
   let token = req.headers.token;
   if (!token) {
     res.status(304).json({
@@ -79,9 +79,74 @@ let tokenCheck = function (req, res) {
   let timestamp = decrypt(token).split('=')[3] / 1000,
     timestamp1 = Date.parse(new Date()) / 1000;
 
-  if (timestamp1 - timestamp > 30 * 60 ) {
+  if (timestamp1 - timestamp > 30 * 60) {
     res.status(304).json({
       msg: 'token expired'
+    });
+  }
+}
+
+let asciiSort = function (a, b, key, flag) {
+  if (typeof a === 'object') a = a[key], b = b[key];
+  if (typeof a === 'string') flag = key;
+
+  if (a < b) {
+    if (flag === false) return 1;
+    return -1;
+  }
+  if (a > b) {
+    if (flag === false) return -1;
+    return 1;
+  }
+  return 0;
+}
+
+let getSign = function (params) {
+  let sign_params = [], secret = "xm_blog";
+
+  for (let key in params) {
+    if (key === 'sign' || key === 'token') {
+      continue;
+    }
+    let val = params[key];
+    if (typeof val === "undefined" || val === null || val === '') {
+      continue;
+    }
+    if (/\W/g.test(key)) {
+      console.warn('接口请求参数名key请不要使用特殊字符，但可使用字母数字_');
+      continue;
+    }
+    let p = { key: key };
+    if (typeof val === 'object') {
+      p.val = JSON.stringify(val);
+    } else {
+      p.val = String(val);
+    }
+    sign_params.push(p);
+  }
+
+  let str = '';
+  let arr = sign_params.sort(function (a, b) {
+    return asciiSort(a, b, 'key');
+  });
+  arr.forEach(a => {
+    str += a.key + a.val;
+  });
+  let sign = crypto.MD5(secret + str + secret).toString().toUpperCase();
+  return sign;
+}
+
+let checkSign = function (req, res) {
+  if (req.method == 'GET') {
+    var params = req.query;
+  } else if (req.method == 'POST') {
+    var params = req.body;
+  }
+  let sign = getSign(params);
+
+  if (sign !== params.sign) {
+    res.status(402).json({
+      msg: '签名不正确！'
     });
   }
 }
@@ -101,6 +166,7 @@ module.exports = {
   myquery,
   encrypt,
   decrypt,
-  tokenCheck,
+  checkToken,
+  checkSign,
   formatParams,
 }

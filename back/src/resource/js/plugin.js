@@ -55,7 +55,7 @@ myaxios.interceptors.request.use(function (req) {
   if (req.type === 'get' && typeof req.data === 'object') {
     let data = req.data;
 
-    for (var key in data) {
+    for (let key in data) {
       if (req.url.indexOf('?') < 0) {
         req.url += `?${key}=${data[key]}`;
       } else {
@@ -107,13 +107,13 @@ myaxios.interceptors.response.use(function (res) {
   switch (status) {
     case 504:
       mylayer({
-        content: "请求失败：" + res.data,
+        content: "请求失败：" + res.data.message,
         status: 'danger'
       });
       break;
     case 404:
       mylayer({
-        content: "请求失败：" + res.data,
+        content: "请求失败：" + res.data.message,
         status: 'danger'
       });
       break;

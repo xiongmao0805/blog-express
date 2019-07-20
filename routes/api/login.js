@@ -19,7 +19,7 @@ router.post('/', logRegCheck, (req, res, next) => {
     });
   }
   // 密码加密
-  req.body.password = crypto.MD5(req.body.password);
+  req.body.password = crypto.MD5(req.body.password).toString().toUpperCase();
   let sql = `select * from users where username='${req.body.username}' and password='${req.body.password}'`;
   myquery(sql, res, data => {
     if (data.length <= 0) {
