@@ -83,7 +83,9 @@ let checkToken = function (req, res) {
     res.status(304).json({
       msg: 'token expired'
     });
+    return false;
   }
+  return true;
 }
 
 let asciiSort = function (a, b, key, flag) {
@@ -137,9 +139,9 @@ let getSign = function (params) {
 }
 
 let checkSign = function (req, res) {
-  if (req.method == 'GET') {
+  if (req.method === 'GET') {
     var params = req.query;
-  } else if (req.method == 'POST') {
+  } else if (req.method === 'POST') {
     var params = req.body;
   }
   let sign = getSign(params);
@@ -148,7 +150,9 @@ let checkSign = function (req, res) {
     res.status(402).json({
       msg: '签名不正确！'
     });
+    return false;
   }
+  return true;
 }
 
 let formatParams = function (params) {

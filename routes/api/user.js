@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let crypto = require("crypto-js");   // 加密组件
-let { myquery, checkSign, checkToken } = require('../../resource/utils');
+let { myquery, checkSign, checkToken, encrypt } = require('../../resource/utils');
 
 // 创建管理员账号
 router.get('/master', (req, res, next) => {
@@ -27,12 +27,26 @@ router.get('/username/:name', (req, res, next) => {
 });
 
 router.use('/token/', (req, res, next) => {
-  checkSign(req, res);
-  checkToken(req, res);
+  let isSignValid = checkSign(req, res);
+  let isTokenValid = checkToken(req, res);
+  if (!isSignValid || !isTokenValid) {
+    return;
+  }
   next();
 });
-router.post('/token/freshToken', (req, res, next) => {
-  res.json({});
+router.get('/token/freshToken', (req, res, next) => {
+  let heders = req.headers;
+  if (!heders.userid || !heders.username) {
+    res.status(300).json({
+      msg: 'token 刷新失败！'
+    });
+    return;
+  }
+  let token = `userid=${heders.userid};username=${heders.username};timestamp=${Date.parse(new Date())}`;
+  token = encrypt(token);
+  res.json({
+    token: token
+  });
 });
 
 module.exports = router;

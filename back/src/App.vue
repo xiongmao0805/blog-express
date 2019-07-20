@@ -51,6 +51,9 @@ export default {
 body {
   color: #333;
 }
+.vl-notify .vl-notify-content {
+  word-break: break-all;
+}
 .notify {
   //重置layer样式
   .notify-msg {

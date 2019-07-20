@@ -83,6 +83,9 @@ export function getSign(params) {
   let sign_params = [], secret = "xm_blog";
   params.timestamp = Date.parse(new Date());
   for (let key in params) {
+    if (key === 'token') {
+      continue;
+    }
     let val = params[key];
     if (typeof val === "undefined" || val === null || val === '') {
       delete params[key];

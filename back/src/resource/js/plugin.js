@@ -52,7 +52,7 @@ const myaxios = axios.create({
 });
 // 统一处理请求
 myaxios.interceptors.request.use(function (req) {
-  if (req.type === 'get' && typeof req.data === 'object') {
+  if (req.method === 'get' && typeof req.data === 'object') {
     let data = req.data;
 
     for (let key in data) {
@@ -104,16 +104,17 @@ myaxios.interceptors.response.use(function (res) {
   if (errCatch === true) {
     return err;
   }
+  let content = res.data.message ? res.data.message : res.data;
   switch (status) {
     case 504:
       mylayer({
-        content: "请求失败：" + res.data.message,
+        content: "请求失败：" + content,
         status: 'danger'
       });
       break;
     case 404:
       mylayer({
-        content: "请求失败：" + res.data.message,
+        content: "请求失败：" + content,
         status: 'danger'
       });
       break;
@@ -131,7 +132,7 @@ myaxios.interceptors.response.use(function (res) {
       mylayer({
         content: "token 已过期，请重新登录！",
         callback: function () {
-          setCookie('token', '');
+          setCookie('token', '', -1);
           router.replace("/admin/login");
         }
       });
