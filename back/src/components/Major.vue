@@ -24,27 +24,29 @@
 </template>
 
 <script>
-import { getCookie, setCookie } from "@/resource/js/utils.js";
+import { getCookie, setCookie, getSign } from "@/resource/js/utils.js";
 
 export default {
   name: 'major',
   mounted() {
-    // 20自动刷新token
-    let timer;
-    // timer = setTimeout(() => {
-      this.$ajax({
-        type: 'get',
-        url: '/user/token/freshToken',
-      }).then(res => {
-        console.log(res)
-      });
-    // }, 20 * 60 * 1000);
-    // window.onmousemove = function () {
-    // clearTimeout(timer);
-    // timer = setTimeout(() => {
-    //   setCookie('token', '', -1);
-    // }, 20 * 60 * 1000);
-    // }
+    // 25分钟自动刷新token
+    let timer = setInterval(() => {
+      this.tokenFresh();
+    }, 25 * 60 * 1000);
+
+    // 20分钟不操作登录失效
+    let timerClear;
+    function tokenClear() {
+      timerClear = setTimeout(() => {
+        setCookie('token', '', -1);
+        clearInterval(timer);
+      }, 20 * 60 * 1000);
+    }
+    tokenClear();
+    document.onmousemove = document.onmousedown = document.onkeydown = function () {
+      clearTimeout(timerClear);
+      tokenClear();
+    };
   },
   computed: {
     path() {
@@ -57,19 +59,18 @@ export default {
       window.location.reload();
     },
     tokenFresh() {
-      // this.$ajax({
-      //   method: 'post',
-      //   url: '/api/fresh',
-      //   headers: {
-      //     token: getCookie('token')
-      //   }
-      // }).then((res) => {
-      //   if (res.data.resultCode == 200) {
-      //     this.freshed = true;
-      //     let newtoken = res.headers.authorization.split('Bearer ')[1];
-      //     setCookie('token', newtoken);
-      //   }
-      // });
+      this.$ajax({
+        method: 'get',
+        url: '/user/token/freshToken',
+        data: getSign({
+          token: getCookie('token')
+        })
+      }).then(res => {
+        let token = res.data.token;
+        if (token) {
+          setCookie('token', token);
+        }
+      });
     }
   }
 }
