@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Major from '@/components/Major'
-// import Home from '@/components/Home'
+import Home from '@/components/Home'
 import Login from '@/components/Login'
 import Register from '@/components/register'
 
@@ -31,6 +31,17 @@ export default new Router({
       path: '/admin',
       name: 'admin',
       component: Major,
+      children: [
+        {
+          path: '',
+          redirect: { name: 'index' }
+        },
+        {
+          path: 'index',
+          name: 'index',
+          component: Home,
+        },
+      ]
     },
     {
       path: '/admin/login',
@@ -45,10 +56,6 @@ export default new Router({
   ]
 });
 // children: [
-//   {
-//     path: '',
-//     redirect: { name: 'index' }
-//   },
 //   {
 //     path: 'index',
 //     name: 'index',
