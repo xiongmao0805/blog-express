@@ -1,39 +1,35 @@
 <template>
-  <div class="log-reg register">
+  <div class="log-reg login">
     <slot></slot>
     <div class="wrap">
-      <h1>
-        <b>注册</b>
-        <span class="fr">已有帐号，前往 <router-link to="login">登录</router-link></span>
-      </h1>
+      <h1>Welcome</h1>
       <p class="errorinfo">
         <b class="errors" v-show="errors.has('username')">{{errors.first('username')}}</b>
         <b class="errors" v-show="!errors.has('username') && errors.has('password')">{{errors.first('password')}}</b>
-        <b class="errors" v-show="!errors.has('username') && !errors.has('password') && errors.has('confirm')">{{errors.first('confirm')}}</b>
       </p>
       <div class="form-item">
-        <span class="icon icon-user"></span>
-        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-validate="regParam.username" v-model="username" maxlength="30">
+        <i class="icon icon-user"></i>
+        <input type="text" name="username" @keyup="onEnter" placeholder="请输入用户名" autocomplete="off" v-model="username" v-validate="regParam.username" maxlength="30" style="padding-right: 20px;">
         <span class="icon-check-alt" v-show="nameEnable"></span>
       </div>
       <div class="form-item">
-        <span class="icon icon-lock"></span>
-        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-validate="regParam.password" v-model="password" maxlength="30">
+        <i class="icon icon-lock"></i>
+        <input type="password" name="password" @keyup="onEnter" placeholder="请输入密码" autocomplete="off" v-model="password" v-validate="regParam.password" maxlength="30">
       </div>
-      <div class="form-item">
-        <span class="icon icon-lock"></span>
-        <input type="password" name="confirm" @keyup="onEnter" placeholder="请确认密码" autocomplete="off" v-model="confirm" @blur="testConfirm">
+      <button type="login" @click="login">Login</button>
+      <div class="links">
+        <a href="/web" class="fl">前往首页</a>
+        <router-link to="register">注册</router-link>
       </div>
-      <button type="submit" @click="register">Register</button>
     </div>
   </div>
 </template>
 
 <script>
-import { getCookie } from "@/resource/js/utils.js";
+import { getCookie, setCookie } from "static/js/utils.js";
 
 export default {
-  name: "register",
+  name: "login",
   data() {
     return {
       regParam: {
@@ -42,18 +38,17 @@ export default {
           min: 2,
           max: 30,
           regex: /\w/g
-          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+_?[0-9a-z]+$/i   字母和数字组合，可包含_
         },
         password: {
           required: true,
           min: 6,
           max: 30,
-          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i
+          // regex: /^(?![0-9]+$)(?![a-z]+$)[0-9a-z]+$/i   字母和数字组合
         }
       },
       username: "",
       password: "",
-      confirm: "",
       nameEnable: false,
       checkState: false,
       timer: "",
@@ -61,17 +56,15 @@ export default {
     };
   },
   created() {
-    //let ptn = /^[a-zA-Z]+[\w-]+[a-zA-Z0-9]+@[a-zA-Z0-9]+[\w-]+[a-zA-Z0-9]+(\.[a-zA-Z]+){1,2}$/i; 邮箱格式验证正则
     if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
   },
   mounted() {
     window.onkeyup = e => {
-      if (this.$route.name != "register") return;
-      if (e.keyCode == 13) this.register();
+      if (this.$route.name != "login") return;
+      if (e.keyCode == 13) this.login();
     };
   },
   watch: {
-    // 验证用户名是否可用
     username(val, oldval) {
       if (!/^\w{2}/i.test(val)) {
         this.nameEnable = false;
@@ -80,6 +73,7 @@ export default {
       if (this.timer) clearTimeout(this.timer);
 
       this.timer = setTimeout(() => {
+        if (!val) return;
         if (this.checkState) return;
         this.checkState = true;
         if (this.errors.has("username")) this.errors.remove("username");
@@ -90,7 +84,7 @@ export default {
           method: "get",
           url: "/user/username/" + val
         }).then(res => {
-          if (res.data.length <= 0) {
+          if (res.data.length > 0) {
             this.nameEnable = true;
           } else {
             this.nameEnable = false;
@@ -102,26 +96,14 @@ export default {
     }
   },
   methods: {
-    testConfirm() {
-      if (!this.password) return;
-      if (this.confirm != this.password) {
-        let rule = {
-          field: "confirm",
-          msg: "密码不一致",
-          rule: "match",
-          scope: null
-        };
-        this.errors.items.push(rule);
-      }
-    },
     onEnter: function (e) {
       if (e.keyCode == 13) {
         this.$validator.validate().then(valid => {
-          if (valid) this.register();
+          if (valid) this.login();
         });
       }
     },
-    register() {
+    login() {
       if (!this.username || !this.password) return;
       if (this.checkState) {
         this.$layer({
@@ -132,13 +114,12 @@ export default {
       if (!this.nameEnable) {
         let rule = {
           field: "username",
-          msg: "用户名已存在",
+          msg: "用户名不存在",
           rule: "match",
           scope: null
         };
         this.errors.items.push(rule);
       }
-      this.testConfirm();
       if (this.errors.items.length > 0) return;
       if (this.flag) return;
       this.flag = true;
@@ -146,19 +127,22 @@ export default {
       this.$ajax({
         middleware: false,
         method: "post",
-        url: "/register",
+        url: "/login",
         data: {
           username: this.username,
           password: this.password
         }
       }).then(res => {
-        let _this = this;
-        this.$layer({
-          content: '注册成功',
-          callback: function () {
-            _this.$router.push("/admin/login");
-          }
-        });
+        setCookie("token", res.data.token);
+        setCookie("userid", res.data.userid);
+        setCookie("username", res.data.username);
+        setCookie("level", res.data.level);
+        this.$emit("freshCookie");
+        if (res.data.level == 1) {
+          this.$router.push("/admin");
+        } else {
+          this.$router.push("/web");
+        }
       }).always(() => {
         this.flag = false;
       });
@@ -168,29 +152,28 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../resource/css/reset.scss";
-@import "../resource/css/log_reg.scss";
+@import "static/css/reset.scss";
+@import "static/css/log_reg.scss";
 @include reset();
-.register {
+
+.login {
   .wrap {
     h1 {
       font-size: 40px;
+      text-align: center;
       line-height: 70px;
-      margin-bottom: 10px;
-      padding: 0 2px;
-
-      span {
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.75);
-        line-height: 14px;
-        margin-top: 40px;
-
-        a {
-          color: #fff;
-        }
-      }
     }
     @include common();
+
+    .links {
+      text-align: right;
+      margin-top: 14px;
+
+      a {
+        color: #fff;
+        padding: 0 5px;
+      }
+    }
   }
 }
 </style>

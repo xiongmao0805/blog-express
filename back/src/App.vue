@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <router-view @freshCookie="freshCookie">
-      <img src="./resource/images/login_bg.jpg" class="login_bg">
+      <img src="../static/images/login_bg.jpg" class="login_bg">
     </router-view>
   </div>
 </template>
 
 <script>
-import { getCookie, setCookie } from "@/resource/js/utils.js";
+import { getCookie, setCookie } from "static/js/utils.js";
 
 export default {
   name: "admin",
@@ -78,7 +78,7 @@ body {
 #app {
   position: relative;
   overflow: hidden;
-  font-size: 1.1rem;
+  font-size: 14px;
   width: 100%;
   height: 100vh;
   .log-reg {

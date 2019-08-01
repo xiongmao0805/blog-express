@@ -9,8 +9,8 @@
     <div class="main-ctn">
       <div class="menu">
         <p><router-link :to="{name:'index'}"><i class="icon-newspaper"></i>总览</router-link></p>
-        <!-- <p><router-link :to="{name:'category'}"><i class="icon-pie-chart"></i>分类管理</router-link></p>
-        <p><router-link :to="{name:'article'}"><i class="icon-books"></i>文章管理</router-link></p>
+        <p><router-link :to="{name:'category'}"><i class="icon-pie-chart"></i>分类管理</router-link></p>
+        <!-- <p><router-link :to="{name:'article'}"><i class="icon-books"></i>文章管理</router-link></p>
         <p><router-link :to="{name:'comment'}"><i class="icon-bubble" style="font-size: 1.25rem;"></i>评论管理</router-link></p>
         <p><router-link :to="{name:'users'}"><i class="icon-user" style="font-size: 1.4rem;"></i>用户列表</router-link></p>
         <p><router-link :to="{name:'links'}"><i class="icon-link"></i>友情链接</router-link></p>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getCookie, setCookie, getSign } from "@/resource/js/utils.js";
+import { getCookie, setCookie, getSign } from "static/js/utils.js";
 
 export default {
   name: 'major',
@@ -148,7 +148,6 @@ export default {
       flex: auto;
       position: relative;
       overflow: hidden;
-      padding: 10px 20px 20px;
       .loading {
         position: absolute;
         left: 0;
@@ -167,7 +166,8 @@ export default {
       .section {
         overflow-x: hidden;
         overflow-y: visible;
-        height: 100%;
+        height: calc(100% - 30px);
+        padding: 10px 20px 20px;
         h1.title {
           position: relative;
           font-size: 16px;
@@ -183,6 +183,16 @@ export default {
             color: #7a7a7a;
             vertical-align: top;
             margin-right: 6px;
+          }
+          .add {
+            float: right;
+            font-size: 13px;
+            color: #47a4e9;
+            margin-right: 10px;
+            cursor: pointer;
+            i {
+              margin-right: 5px;
+            }
           }
         }
       }

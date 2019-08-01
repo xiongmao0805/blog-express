@@ -1,25 +1,25 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Major from '@/components/Major'
-import Home from '@/components/Home'
-import Login from '@/components/Login'
-import Register from '@/components/register'
+import Major from '@/pages/Major'
+import Home from '@/pages/Home'
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
 
-// import Category from '@/components/category'
-// import AddCategory from '@/components/category/Add.vue'
-// import ModifyCategory from '@/components/category/Modify.vue'
+import Category from '@/pages/Category'
+import CategoryEdit from '@/pages/Category_edit.vue'
+// import ModifyCategory from '@/pages/category/Modify.vue'
 
-// import Article from '@/components/article'
-// import AddArticle from '@/components/article/Add.vue'
-// import ModifyArticle from '@/components/article/Modify.vue'
+// import Article from '@/pages/article'
+// import AddArticle from '@/pages/article/Add.vue'
+// import ModifyArticle from '@/pages/article/Modify.vue'
 
-// import User from '@/components/user'
-// import Links from '@/components/links'
-// import AddLinks from '@/components/links/Add.vue'
-// import ModifyLinks from '@/components/links/Modify.vue'
-// import Config from '@/components/config'
-// import AddConfig from '@/components/config/Add.vue'
-// import ModifyConfig from '@/components/config/Modify.vue'
+// import User from '@/pages/user'
+// import Links from '@/pages/links'
+// import AddLinks from '@/pages/links/Add.vue'
+// import ModifyLinks from '@/pages/links/Modify.vue'
+// import Config from '@/pages/config'
+// import AddConfig from '@/pages/config/Add.vue'
+// import ModifyConfig from '@/pages/config/Modify.vue'
 
 Vue.use(Router)
 
@@ -41,6 +41,22 @@ export default new Router({
           name: 'index',
           component: Home,
         },
+        {
+          path: 'category',
+          name: 'category',
+          component: Category,
+          children: [
+            {
+              path: 'add',
+              name: 'categoryEdit',
+              component: CategoryEdit
+            },
+            // {
+            //   path: 'modify/:id',
+            //   component: ModifyCategory
+            // }
+          ]
+        },
       ]
     },
     {
@@ -56,11 +72,6 @@ export default new Router({
   ]
 });
 // children: [
-//   {
-//     path: 'index',
-//     name: 'index',
-//     component: Home,
-//   },
 //   {
 //     path: 'category',
 //     name: 'category',

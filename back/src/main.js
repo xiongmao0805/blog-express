@@ -3,8 +3,8 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import store from '@/store';
-import { myaxios, mylayer, Validate } from '@/resource/js/plugin.js';
+import store from './store';
+import { myaxios, mylayer, Validate } from 'static/js/plugin.js';
 
 Vue.config.productionTip = false;
 

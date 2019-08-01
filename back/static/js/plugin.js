@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import router from '../../router/index';
+import router from '@/router/index';
 import axios from 'axios';
 import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
@@ -90,7 +90,7 @@ myaxios.interceptors.response.use(function (res) {
   // console.log(err);
   if (err.message.indexOf('timeout') >= 0) {
     mylayer({
-      content: "请示超时！",
+      content: "请求超时！",
     });
     return Promise.reject(err);
   }
@@ -182,6 +182,10 @@ const dictionary = {
       password: '密码',
       email: '邮箱',
       phone: '手机号',
+      name: '名称',
+      alias: '英文名',
+      title: '标题',
+      desc: '描述',
     }
   }
 };
