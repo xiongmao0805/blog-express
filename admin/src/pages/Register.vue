@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { getCookie } from "static/js/utils.js";
+import { getCookie } from "@/utils/utils.js";
 
 export default {
   name: "register",
@@ -85,7 +85,6 @@ export default {
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
-          middleware: false,
           catch: true,
           method: "get",
           url: "/user/username/" + val
@@ -144,7 +143,6 @@ export default {
       this.flag = true;
 
       this.$ajax({
-        middleware: false,
         method: "post",
         url: "/register",
         data: {
@@ -168,9 +166,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "static/css/reset.scss";
-@import "static/css/log_reg.scss";
-@include reset();
+@import "../source/css/log_reg.scss";
 
 .register {
   .wrap {

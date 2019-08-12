@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="loading" v-show="!loaded"><img src="static/images/loading.gif" /></div>
+    <div class="loading" v-show="!loaded"><img src="../source/images/loading.gif" /></div>
     <div class="section category">
       <h1 class="title">
         <i class="icon icon-pie-chart"></i>分类列表
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { getSign, deleteList } from 'static/js/utils.js'
+import { getSign, deleteList } from '@/utils/utils.js'
 
 export default {
   name: 'category',
@@ -76,7 +76,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "static/css/section.scss";
+@import "../source/css/section.scss";
 
 .category {
   @include section();

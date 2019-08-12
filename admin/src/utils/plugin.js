@@ -1,59 +1,73 @@
 import Vue from 'vue';
 import router from '@/router/index';
 import axios from 'axios';
-import layer from 'vue-layer';
 import Validate, { Validator } from 'vee-validate';
+import { Message } from 'element-ui';
 import { setCookie, getCookie } from './utils';
-import zh_CN from 'vee-validate/dist/locale/zh_CN';
-require('es6-promise-always');  // 扩展axios.always
+require('es6-promise-always');  // 扩展 axios.always
+import { getSign } from '@/utils/utils.js'
+// import zh_CN from 'vee-validate/dist/locale/zh_CN';
 
-// 注册弹窗组件
-Vue.prototype._layer = layer(Vue, {
-  msgtime: 1,
-});
-// 注册并统一弹窗组件
-const mylayer = function (options) {
-  if (options.status == 'danger') {
-    Vue.prototype._layer.confirm(options.content, {
-      title: options.title ? options.title : '提示',
-      shade: options.shade ? options.shade : false,
-      shadeClose: false,
-    }, function () {
-      // 强制关闭所有弹层
-      if (options.closeAll === true) {
-        Vue.prototype._layer.closeAll();
-        return;
+function layer(options) {
+  if (options.type == 'danger') {
+
+  } else if (options.type == 'warning') {
+    Message({
+      dangerouslyUseHTMLString: true,
+      type: 'warning',
+      center: true,
+      duration: 2000,
+      message: options.content,
+      onClose: function () {
+        if (typeof options.callback == 'function') {
+          options.callback();
+        }
       }
-      // 点击确认后可执行回调
-      if (options.callback && typeof options.callback === 'function') {
-        options.callback();
-      }
-      Vue.prototype._layer.close(this.id);
     });
   } else {
-    Vue.prototype._layer.msg(options.content, function () {
-      // 强制关闭所有弹层
-      if (options.closeAll === true) {
-        Vue.prototype._layer.closeAll();
-        return;
+    Message({
+      dangerouslyUseHTMLString: true,
+      type: 'success',
+      center: true,
+      duration: 2000,
+      message: options.content,
+      onClose: function () {
+        if (typeof options.callback == 'function') {
+          options.callback();
+        }
       }
-      if (options.callback && typeof options.callback === 'function') {
-        options.callback();
-      }
-      Vue.prototype._layer.close(this.id);
     });
   }
 }
 
 // 创建ajax实例
-const myaxios = axios.create({
+const http = axios.create({
   baseURL: window.location.origin + '/api',
   timeout: 10000,
 });
 // 统一处理请求
-myaxios.interceptors.request.use(function (req) {
-  if (req.method === 'get' && typeof req.data === 'object') {
-    let data = req.data;
+http.interceptors.request.use(function (req) {
+  // console.log(req);
+  // 统一添加请求头信息
+  let userid = getCookie('userid'),
+    username = getCookie('username'),
+    token = getCookie('token');
+  if (userid) {
+    req.headers.userid = userid;
+  }
+  if (username) {
+    req.headers.username = username;
+  }
+  if (token) {
+    req.headers.token = token;
+  }
+
+  // 统一处理签名
+  if (req.method === 'post') {
+    req.data = getSign(req.data);
+  } else if (req.method === 'get') {
+    let data = req.data === 'object' ? req.data : {};
+    data = getSign(data);
 
     for (let key in data) {
       if (req.url.indexOf('?') < 0) {
@@ -63,33 +77,24 @@ myaxios.interceptors.request.use(function (req) {
       }
     }
   }
-  // console.log(req);
-
-  // middleware 为 false的请求，不走中间键，不做处理，部分接口可以不走中间键
-  if (req.middleware === false) return req;
-
-  let userid = getCookie('userid'),
-    username = getCookie('username'),
-    token = getCookie('token');
-  req.headers.userid = userid;
-  req.headers.username = username;
-  req.headers.token = token;
 
   return req
 }, function (err) {
   debugger
-  mylayer({
+  layer({
+    type: 'danger',
     content: "请求超时！",
   });
   Promise.reject(err);
 });
 // 统一处理返回
-myaxios.interceptors.response.use(function (res) {
+http.interceptors.response.use(function (res) {
   return res;
 }, function (err) {
   // console.log(err);
   if (err.message.indexOf('timeout') >= 0) {
-    mylayer({
+    layer({
+      type: 'danger',
       content: "请求超时！",
     });
     return Promise.reject(err);
@@ -107,29 +112,32 @@ myaxios.interceptors.response.use(function (res) {
   let content = res.data.message ? res.data.message : res.data;
   switch (status) {
     case 504:
-      mylayer({
+      layer({
+        type: 'danger',
         content: "请求失败：" + content,
-        status: 'danger'
       });
       break;
     case 404:
-      mylayer({
+      layer({
+        type: 'danger',
         content: "请求失败：" + content,
-        status: 'danger'
       });
       break;
     case 403:
-      mylayer({
+      layer({
+        type: 'warning',
         content: "权限不足，请联系管理员！",
       });
       break;
     case 402:
-      mylayer({
+      layer({
+        type: 'warning',
         content: "签名不正确！",
       });
       break;
     case 304:
-      mylayer({
+      layer({
+        type: 'warning',
         content: "token 已过期，请重新登录！",
         callback: function () {
           setCookie('token', '', -1);
@@ -142,12 +150,14 @@ myaxios.interceptors.response.use(function (res) {
       if (errCatch == 300) {
         return err;
       }
-      mylayer({
+      layer({
+        type: 'warning',
         content: res.data.msg,
       });
       break;
     default:
-      mylayer({
+      layer({
+        type: 'warning',
         content: "未知错误！",
       });
       break;
@@ -155,11 +165,6 @@ myaxios.interceptors.response.use(function (res) {
   return Promise.reject(err);
 });
 
-// 自定义验证规则
-Validator.extend('phone', {
-  getMessage: (field, params, data) => data.message,
-  validate: value => /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/.test(value)
-});
 // 自定义错误提示
 const dictionary = {
   zh_CN: {
@@ -189,10 +194,15 @@ const dictionary = {
     }
   }
 };
+// 自定义验证规则
+Validator.extend('phone', {
+  getMessage: (field, params, data) => data.message,
+  validate: value => /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/.test(value)
+});
 Validator.localize(dictionary);
 
 export {
-  myaxios,
-  mylayer,
+  layer,
+  http,
   Validate
-};
+}

@@ -1,6 +1,6 @@
-# front
+# admin
 
-> the front page of blog
+> A Vue.js project
 
 ## Build Setup
 

@@ -1,8 +1,8 @@
 {
-  "name": "front",
+  "name": "web",
   "version": "1.0.0",
-  "description": "the front page of blog",
-  "author": "qjl_0805@126.com",
+  "description": "A Vue.js project",
+  "author": "QianLin0805 <qjl_0805@126.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

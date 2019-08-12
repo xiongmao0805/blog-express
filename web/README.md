@@ -1,6 +1,6 @@
-# admin
+# web
 
-> the backpage of blog
+> A Vue.js project
 
 ## Build Setup
 

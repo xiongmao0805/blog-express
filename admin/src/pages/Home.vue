@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="loading" v-show="loaded"><img src="static/images/loading.gif" /></div>
+    <div class="loading" v-show="loaded"><img src="../source/images/loading.gif" /></div>
     <div class="section summary">
       <h1 class="title"><i class="icon icon-newspaper"></i>数据总览</h1>
       <ul>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getCookie, formatDate } from 'static/js/utils.js'
+import { getCookie, formatDate } from '@/utils/utils.js'
 
 export default {
   name: 'home',
@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     uploadLimit() {
-      return this.$store.state.common.uploadLimit;
+      // return this.$store.state.common.uploadLimit;
     }
   },
   methods: {

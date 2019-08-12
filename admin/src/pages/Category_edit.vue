@@ -68,7 +68,7 @@
 
 <script>
 import upload from '../components/Upload'
-import { toBase64, addList } from 'static/js/utils.js'
+import { toBase64, addList } from '@/utils/utils.js'
 
 export default {
   data() {
@@ -156,7 +156,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "static/css/edit.scss";
+@import "../source/css/edit.scss";
 @include edit();
 
 </style>

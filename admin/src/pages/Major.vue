@@ -23,23 +23,23 @@
 </template>
 
 <script>
-import { getCookie, setCookie, getSign } from "static/js/utils.js";
+import { getCookie, setCookie, getSign } from "@/utils/utils.js";
 
 export default {
   name: 'major',
   mounted() {
-    // 25分钟自动刷新token
+    // 每5分钟自动刷新token
     let timer = setInterval(() => {
       this.tokenFresh();
-    }, 25 * 60 * 1000);
+    }, 5 * 60 * 1000);
 
-    // 20分钟不操作登录失效
+    // 30分钟不操作登录失效
     let timerClear;
     function tokenClear() {
       timerClear = setTimeout(() => {
         setCookie('token', '', -1);
         clearInterval(timer);
-      }, 20 * 60 * 1000);
+      }, 30 * 60 * 1000);
     }
     tokenClear();
     document.onmousemove = document.onmousedown = document.onkeydown = function () {
