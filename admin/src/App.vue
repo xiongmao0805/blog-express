@@ -23,7 +23,7 @@ export default {
       return;
     }
     if (this.$route.name == "register") return;
-    // this.$router.replace("/admin/login");
+    this.$router.replace("/admin/login");
   },
   watch: {
     $route(to, from) {

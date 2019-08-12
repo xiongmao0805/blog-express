@@ -79,9 +79,11 @@ export default {
         if (this.errors.has("username")) this.errors.remove("username");
 
         this.$ajax({
-          catch: true,
           method: "get",
-          url: "/user/username/" + val
+          url: "/user/username/" + val,
+          headers: {
+            catch: true
+          }
         }).then(res => {
           if (res.data.length > 0) {
             this.nameEnable = true;
@@ -106,6 +108,7 @@ export default {
       if (!this.username || !this.password) return;
       if (this.checkState) {
         this.$layer({
+          type: 'warning',
           content: '请检查用户名是否可用！',
         });
         return;

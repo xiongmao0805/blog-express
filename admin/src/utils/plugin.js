@@ -1,8 +1,7 @@
-import Vue from 'vue';
 import router from '@/router/index';
 import axios from 'axios';
 import Validate, { Validator } from 'vee-validate';
-import { Message } from 'element-ui';
+import { Message, MessageBox } from 'element-ui';
 import { setCookie, getCookie } from './utils';
 require('es6-promise-always');  // 扩展 axios.always
 import { getSign } from '@/utils/utils.js'
@@ -10,11 +9,23 @@ import { getSign } from '@/utils/utils.js'
 
 function layer(options) {
   if (options.type == 'danger') {
-
+    MessageBox({
+      dangerouslyUseHTMLString: true,
+      type: 'error',
+      title: '提示',
+      showClose: true,
+      message: options.content,
+      callback: function () {
+        if (typeof options.callback == 'function') {
+          options.callback();
+        }
+      }
+    });
   } else if (options.type == 'warning') {
     Message({
       dangerouslyUseHTMLString: true,
       type: 'warning',
+      customClass: 'warning',
       center: true,
       duration: 2000,
       message: options.content,
@@ -28,6 +39,7 @@ function layer(options) {
     Message({
       dangerouslyUseHTMLString: true,
       type: 'success',
+      customClass: 'success',
       center: true,
       duration: 2000,
       message: options.content,
@@ -101,14 +113,12 @@ http.interceptors.response.use(function (res) {
   }
 
   let res = err.response,
-    status = res ? res.status : '',
-    xhrConfig = res ? res.config : '',
-    errCatch = xhrConfig ? xhrConfig.catch : '';
+    status = res ? res.status : '';
+  if (res && res.config && res.config.headers.catch === true) {
+    return Promise.reject(err);
+  }
 
   // 请求头catch为false的请求，不处理错误
-  if (errCatch === true) {
-    return err;
-  }
   let content = res.data.message ? res.data.message : res.data;
   switch (status) {
     case 504:
@@ -147,8 +157,8 @@ http.interceptors.response.use(function (res) {
       break;
     case 300:
       // 请求头catch为300的请求，自行处理300错误代码
-      if (errCatch == 300) {
-        return err;
+      if (res && res.config && res.headers.config.catch === 300) {
+        return Promise.reject(err);
       }
       layer({
         type: 'warning',
