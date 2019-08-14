@@ -27,7 +27,7 @@ function layer(options) {
       type: 'warning',
       customClass: 'warning',
       center: true,
-      duration: 2000,
+      duration: (typeof options.time == 'number') ? options.time : 2000,
       message: options.content,
       onClose: function () {
         if (typeof options.callback == 'function') {
@@ -41,7 +41,7 @@ function layer(options) {
       type: 'success',
       customClass: 'success',
       center: true,
-      duration: 2000,
+      duration: (typeof options.time == 'number') ? options.time : 2000,
       message: options.content,
       onClose: function () {
         if (typeof options.callback == 'function') {

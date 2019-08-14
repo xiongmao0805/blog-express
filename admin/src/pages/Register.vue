@@ -62,7 +62,7 @@ export default {
   },
   created() {
     //let ptn = /^[a-zA-Z]+[\w-]+[a-zA-Z0-9]+@[a-zA-Z0-9]+[\w-]+[a-zA-Z0-9]+(\.[a-zA-Z]+){1,2}$/i; 邮箱格式验证正则
-    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
+    if (getCookie("token") && getCookie("userid")) this.$router.replace({name: 'index'});
   },
   mounted() {
     window.onkeyup = e => {
@@ -157,7 +157,7 @@ export default {
         this.$layer({
           content: '注册成功',
           callback: function () {
-            _this.$router.push("/admin/login");
+            _this.$router.push({name: 'login'});
           }
         });
       }).always(() => {

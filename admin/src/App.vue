@@ -22,8 +22,9 @@ export default {
       if (this.level > 1) this.$router.replace("/web");
       return;
     }
-    if (this.$route.name == "register") return;
-    this.$router.replace("/admin/login");
+    let routerName = this.$route.name;
+    if (routerName == "register" || routerName == 'login') return;
+    this.$router.replace({ name: 'login' });
   },
   watch: {
     $route(to, from) {
@@ -31,8 +32,11 @@ export default {
         setCookie("userid", "", -1);
         setCookie("level", "", -1);
 
-        if (this.$route.name == "register") return;
-        this.$router.replace("/admin/login");
+        let routerName = this.$route.name;
+        if (routerName == "register" || routerName == 'login') {
+          return;
+        }
+        this.$router.replace({ name: 'login' });
         return;
       }
       if (getCookie("level") > 1) this.$router.replace("/web");
@@ -49,6 +53,25 @@ export default {
 <style lang="scss">
 @import "./source/css/reset.scss";
 @include reset();
+// 重置提示样式
+.el-message {
+  min-width: 320px;
+  color: #fff;
+  background: #27c24c;
+  border-color: #27c24c;
+  padding: 12px 15px 12px 20px;
+  .el-message__icon {
+    color: #fff;
+    font-size: 16px;
+  }
+  .el-message__content {
+    color: #fff;
+  }
+  &.warning {
+    background: #ffb617;
+    border-color: #ffb617;
+  }
+}
 
 body {
   color: #333;

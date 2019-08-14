@@ -56,7 +56,7 @@ export default {
     };
   },
   created() {
-    if (getCookie("token") && getCookie("userid")) this.$router.replace("/admin");
+    if (getCookie("token") && getCookie("userid")) this.$router.replace({name: 'index'});
   },
   mounted() {
     window.onkeyup = e => {
@@ -140,7 +140,7 @@ export default {
         setCookie("level", res.data.level);
         this.$emit("freshCookie");
         if (res.data.level == 1) {
-          this.$router.push("/admin");
+          this.$router.push({name: 'index'});
         } else {
           this.$router.push("/web");
         }
